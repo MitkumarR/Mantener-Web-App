@@ -73,7 +73,8 @@ function Signup() {
         )}
         
         { isSubmitting && (<span className="text-white">Loading...</span>)}
-        <input disabled={isSubmitting} type="Submit" className="text-white" />
+       <input disabled={isSubmitting} type="Submit" className="text-white"/>
+        
       </form>
     </div>
   );
