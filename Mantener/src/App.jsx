@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-
+import Signup from './components/SignUp/Signup'
 import Navbar from './components/Navbar/Navbar'
 
 function App() {
@@ -8,7 +8,9 @@ function App() {
 
   return (
     <>
-      <Navbar/>  
+      {/* <Navbar/>  */}
+      <Signup/>
+      
     </>
   )
 }

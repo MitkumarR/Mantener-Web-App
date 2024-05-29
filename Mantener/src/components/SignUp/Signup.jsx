@@ -1,11 +1,82 @@
-import React from 'react'
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
 function Signup() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const delay = (d) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, d * 1000);
+    });
+  };
+  const onSubmit = async (data) => {
+    await delay(2);
+    console.log(data);
+  };
+
   return (
     <div>
-      
+      <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <input
+          {...register("Username", {
+            required: { value: true, message: "Username required" },
+            minLength: {
+              value: 4,
+              message: "Minimum Length of Username should be 4",
+            },
+          })}
+          type="text"
+          placeholder="Username"
+        />
+
+        {errors.Username && (
+          <span className=" text-red-500">{errors.Username.message}</span>
+        )}
+        <input
+          {...register("Password", {
+            required: { value: true, message: "Password required" },
+            minLength: {
+              value: 6,
+              message: "Minimum Length of Username should be 6",
+            },
+          })}
+          type="password"
+          placeholder="Password"
+        />
+        {errors.Paassword && (
+          <span className=" text-red-500">{errors.Password.message}</span>
+        )}
+        <input
+          {...register("ConfirmPassword", {
+            required: {
+              value: true,
+              message: "Please confirm password you have entered",
+            },
+            minLength: {
+              value: 6,
+              message: "Minimum Length of Username should be 6",
+            },
+          })}
+          type="password"
+          placeholder="Confirm Password"
+        />
+        {errors.Paassword && (
+          <span className=" text-red-500">
+            {errors.ConfirmPassword.message}
+          </span>
+        )}
+        
+        { isSubmitting && (<span className="text-white">Loading...</span>)}
+        <input disabled={isSubmitting} type="Submit" className="text-white" />
+      </form>
     </div>
-  )
+  );
 }
 
-export default Signup
+export default Signup;
