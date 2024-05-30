@@ -5,6 +5,7 @@ function Signup() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -18,6 +19,11 @@ function Signup() {
   const onSubmit = async (data) => {
     await delay(2);
     console.log(data);
+
+    if(data.Username[0] === '0')
+    {
+      setError('pattern', {message:'first character must be letter'});
+    }
   };
 
   return (
@@ -49,7 +55,7 @@ function Signup() {
           type="password"
           placeholder="Password"
         />
-        {errors.Paassword && (
+        {errors.Password && (
           <span className=" text-red-500">{errors.Password.message}</span>
         )}
         <input
@@ -66,15 +72,15 @@ function Signup() {
           type="password"
           placeholder="Confirm Password"
         />
-        {errors.Paassword && (
+        {errors.ConfirmPassword && (
           <span className=" text-red-500">
             {errors.ConfirmPassword.message}
           </span>
         )}
         
         { isSubmitting && (<span className="text-white">Loading...</span>)}
+        {errors.pattern && (<span className="text-red">{errors.pattern.message}</span>)}
        <input disabled={isSubmitting} type="Submit" className="text-white"/>
-        
       </form>
     </div>
   );
