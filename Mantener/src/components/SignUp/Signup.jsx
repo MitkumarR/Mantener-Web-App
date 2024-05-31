@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
+import { PiEye, PiEyeClosed } from "react-icons/pi";
 function Signup() {
   const {
     register,
@@ -17,24 +19,40 @@ function Signup() {
     });
   };
 
-  const onSubmit = async (data) => {
-    let r = await fetch("http://localhost:3000/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  const [isEyeOpen, setisEyeOpen] = useState(false)
 
-    let res = await r.text();
-    console.log(data, res);
-    await delay(2);
-
-    if (data.Username[0] === "0") {
-      setError("pattern", { message: "first character must be letter" });
-    }
+  const handleisEyeOpen = () =>{
+    setisEyeOpen(!isEyeOpen);
   };
 
+  const onSubmit = async (data) => {
+
+    if (data.Password != data.ConfirmPassword) {
+      setError("confirmPass", {
+        message: "Please Check your password and then Confirm",
+      });
+    }
+    else
+    {
+
+      let r = await fetch("http://localhost:3000/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      let res = await r.text();
+      console.log(data, res);
+      await delay(2);
+    }
+      
+      if (data.Username[0] === "0") {
+        setError("pattern", { message: "first character must be letter" });
+      }
+      
+  };
   return (
     <div>
       <div className="flex justify-center items-center gap-2 my-5">
@@ -70,9 +88,10 @@ function Signup() {
         <form action="" onSubmit={handleSubmit(onSubmit)}>
           <div
             className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.Username && "border-red-400"
+              errors.Username && "border-red-900"
             }`}
           >
+            <CiUser opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
             <input
               {...register("Username", {
                 required: true,
@@ -89,9 +108,10 @@ function Signup() {
 
           <div
             className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.Username && "border-red-400"
+              errors.Password && "border-red-900"
             }`}
           >
+            <CiLock opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
             <input
               {...register("Password", {
                 required: true,
@@ -100,48 +120,51 @@ function Signup() {
                   message: "Password should have atleast 6 letters",
                 },
               })}
-              type="password"
+              type={`${isEyeOpen ? "text" : "password"}`}
               placeholder="Password"
-              className={`bg-black h-[2rem] focus:outline-none `}
+              className={`bg-black h-[2rem] w-[10rem] focus:outline-none `}
             />
+
+            {isEyeOpen ? <PiEye opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/> : <PiEyeClosed opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/>}
+            
           </div>
 
           <div
             className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.Username && "border-red-400"
+              errors.ConfirmPassword && "border-red-900"
             }`}
           >
+            <CiCircleCheck
+              opacity={0.7}
+              className="w-[1.5rem] h-[1.5rem] mr-2"
+            />
             <input
               {...register("ConfirmPassword", {
                 required: true,
               })}
               type="password"
+              
               placeholder="Confirm Password"
-              className={`bg-black h-[2rem] focus:outline-none `}
+              className={`bg-black h-[2rem] focus:outline-none ${
+                errors.confirmPass && "border-red-900"
+              }`}
             />
           </div>
 
-          {errors.Password && (
-            <span className=" text-red-500 mx-auto ">
-              {errors.Password.message}
-            </span>
-          )}
-
-          {errors.pattern && (
-            <span className="text-red mx-auto">{errors.pattern.message}</span>
-          )}
-          {errors.Username && (
-            <span className=" text-red-500 mx-auto">
-              {errors.Username.message}
-            </span>
-          )}
+          <div className="text-red-500 mx-auto text-sm ">
+            {errors.Password && <span>{errors.Password.message}</span>}
+            {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
+            {errors.Username && <span>{errors.Username.message}</span>}
+          </div>
           {isSubmitting && (
-            <span className="text-white mx-auto flex ">Loading...</span>
+            <div className="flex justify-center items-center w-full ">
+              <AiOutlineLoading3Quarters className="animate-spin" />
+            </div>
           )}
           <button
             disabled={isSubmitting}
             type="Submit"
-            className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto hover:bg-white hover:text-black"
+            className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
           >
             Sign Up
           </button>

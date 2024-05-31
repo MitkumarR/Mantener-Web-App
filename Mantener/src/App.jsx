@@ -5,7 +5,7 @@ import { decrement, increment } from './redux/counter/counterSlice'
 
 import Signup from './components/SignUp/Signup'
 import Navbar from './components/Navbar/Navbar'
-
+import Signin from './components/SignIn/Signin'
 function App() {
   
   const count = useSelector((state) => state.counter.value)
@@ -14,7 +14,8 @@ function App() {
   return (
     <>
       {/* <Navbar/>  */}
-      <Signup/>
+      {/* <Signup/> */}
+      <Signin/>
       {/* <div>
         <button
           aria-label="Increment value"
