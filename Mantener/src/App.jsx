@@ -1,11 +1,21 @@
 import React from "react";
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { decrement, increment } from "./redux/counter/counterSlice";
 
-import Signup from "./components/SignUp/Signup";
-import Navbar from "./components/Navbar/Navbar";
-import Signin from "./components/SignIn/Signin";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import Navbar from "./components/Home/Navbar/Navbar";
+import Sidebar from "./components/Home/Sidebar/Sidebar";
+import Achive from "./components/Home/Main/Achive";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <div>Hello world!</div>,
+  },
+]);
+
+
 function App() {
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
@@ -13,24 +23,15 @@ function App() {
   return (
     <>
       <Navbar />
-      {/* <Signup/> */}
-      {/* <Signin/> */}
+      <hr className=" opacity-50"/>
+      <div className="flex justify-start">
+        <Sidebar/> 
+        <Achive/>
+      </div>
 
-      {/* <div>
-        <button
-          aria-label="Increment value"
-          onClick={() => dispatch(increment())}
-        >
-          +
-        </button>
-        <span>{count}</span>
-        <button
-          aria-label="Decrement value"
-          onClick={() => dispatch(decrement())}
-        >
-          -
-        </button>
-      </div> */}
+      <div>
+        
+      </div>
     </>
   );
 }

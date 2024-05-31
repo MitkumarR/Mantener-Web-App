@@ -4,7 +4,7 @@ const initialState = {
   value: false,
 };
 
-export const refresherSlice = createSlice({
+export const refreshedSlice = createSlice({
   name: "refreshed",
   initialState,
   reducers: {
@@ -14,6 +14,6 @@ export const refresherSlice = createSlice({
   },
 });
 
-export const { refresh } = refresherSlice.actions;
+export const { refresh } = refreshedSlice.actions;
 
-export default refresherSlice.reducer;
+export default refreshedSlice.reducer;

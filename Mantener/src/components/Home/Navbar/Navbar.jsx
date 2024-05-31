@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { change } from "../../redux/clicked/clickedSlice";
-import { refresh } from "../../redux/refresher/refresherSlice";
+import { change } from "../../../redux/clicked/clickedSlice";
+import { refresh } from "../../../redux/refresher/refresherSlice";
+import { grid } from "../../../redux/gridded/griddedSlice";
 
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { GoSearch } from "react-icons/go";
 import { CiGrid2H, CiGrid41, CiRedo, CiSettings, CiUser } from "react-icons/ci";
 
 function Navbar() {
+
   const isClicked = useSelector((state) => state.clicked.value);
   const isRefreshed = useSelector((state) => state.refreshed.value);
+  const isgridded = useSelector((state) => state.gridded.value);
 
   const dispatch = useDispatch();
   
@@ -23,12 +27,13 @@ function Navbar() {
 
   const onRefresh = async () => {
 
-    
+    dispatch(refresh());
     await delay(2);
+    dispatch(refresh());
   };
   return (
     <div>
-      <div className="flex justify-center items-center my-2 text-white w-[100%]">
+      <div className="flex justify-center items-center my-2 text-white w-[100%] ">
         <div className="Logo mx-20 flex justify-center w-[7rem] ">
           <svg
             width="30"
@@ -96,16 +101,21 @@ function Navbar() {
 
         <ul className="flex justify-start gap-5 items-center mx-20">
           <li>
-            <button className="Refresh flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
-              <CiRedo className="size-5" />
+            <button onClick={onRefresh} className="Refresh flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
+              { isRefreshed ?  
+                <AiOutlineLoading3Quarters className={`size-4 animate-spin`}/> :
+                <CiRedo className={`size-5`} />
+              }
             </button>
           </li>
           <li>
-            <button className="GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
-              <CiGrid2H className="size-5" />
+            <button onClick={() => dispatch(grid())} className="GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
+              {
+                isgridded ? <CiGrid41 className={`size-5`}/> :
+                <CiGrid2H className={`size-5`} />
+              }
             </button>
           </li>
-          {/* <CiGrid41 className="size-5"/> */}
           <li>
             <button className="Setting flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
               <CiSettings className="size-5" />
