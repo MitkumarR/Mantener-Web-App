@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock} from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
@@ -121,9 +123,9 @@ function Signin() {
           </div>
 
           <div className="text-red-500 mx-auto text-sm ">
-            {errors.Password && <span>{errors.Password.message}</span>}
-            {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
-            {errors.Username && <span>{errors.Username.message}</span>}
+            {errors.Password && <span>{errors.Password.message}<br/></span>}
+            {errors.confirmPass && <span>{errors.confirmPass.message}<br/></span>}
+            {errors.Username && <span>{errors.Username.message}<br/></span>}
           </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">
@@ -138,7 +140,7 @@ function Signin() {
             Sign In
           </button>
           <hr/>
-          <span className="text-sm">Don't have an Account ? Signup</span>
+          <span className="text-xs flex justify-center items-center my-5">Don't have an Account ? &nbsp; <Link to="/signup" className="text-blue-500  hover:border-b-[1px] hover:border-blue-500">Sign Up</Link></span>
         </form>
       </div>
     </div>

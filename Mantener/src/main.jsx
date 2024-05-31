@@ -14,15 +14,22 @@ import { Provider } from "react-redux";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello world!</div>,
+    element: <App/>,
+  },
+  {
+    path: "/signin",
+    element: <Signin/>,
+  },
+  {
+    path: "/signup",
+    element: <Signup/>,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <Signup /> */}
-      <App />
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
 );

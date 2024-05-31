@@ -7,14 +7,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from "./components/Home/Navbar/Navbar";
 import Sidebar from "./components/Home/Sidebar/Sidebar";
 import Achive from "./components/Home/Main/Achive";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <div>Hello world!</div>,
-  },
-]);
-
+import Notes from "./components/Home/Main/Notes";
+import Bin from "./components/Home/Main/Bin";
 
 function App() {
   const count = useSelector((state) => state.counter.value);
@@ -26,7 +20,7 @@ function App() {
       <hr className=" opacity-50"/>
       <div className="flex justify-start">
         <Sidebar/> 
-        <Achive/>
+        <Notes/>
       </div>
 
       <div>
