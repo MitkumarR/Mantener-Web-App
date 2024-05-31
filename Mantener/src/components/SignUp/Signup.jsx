@@ -4,6 +4,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 function Signup() {
+  
   const {
     register,
     handleSubmit,

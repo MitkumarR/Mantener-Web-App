@@ -1,22 +1,21 @@
-import React from 'react'
-import './App.css'
-import { useSelector, useDispatch } from 'react-redux'
-import { decrement, increment } from './redux/counter/counterSlice'
+import React from "react";
+import "./App.css";
+import { useSelector, useDispatch } from "react-redux";
+import { decrement, increment } from "./redux/counter/counterSlice";
 
-import Signup from './components/SignUp/Signup'
-import Navbar from './components/Navbar/Navbar'
-import Signin from './components/SignIn/Signin'
+import Signup from "./components/SignUp/Signup";
+import Navbar from "./components/Navbar/Navbar";
+import Signin from "./components/SignIn/Signin";
 function App() {
-  
-  const count = useSelector((state) => state.counter.value)
-  const dispatch = useDispatch()
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
 
   return (
     <>
-      <Navbar/> 
+      <Navbar />
       {/* <Signup/> */}
       {/* <Signin/> */}
-      
+
       {/* <div>
         <button
           aria-label="Increment value"
@@ -33,7 +32,7 @@ function App() {
         </button>
       </div> */}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
