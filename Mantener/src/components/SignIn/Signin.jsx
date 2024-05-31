@@ -27,14 +27,6 @@ function Signin() {
 
   const onSubmit = async (data) => {
 
-    if (data.Password != data.ConfirmPassword) {
-      setError("confirmPass", {
-        message: "Please Check your password and then Confirm",
-      });
-    }
-    else
-    {
-
       let r = await fetch("http://localhost:3000/", {
         method: "POST",
         headers: {
@@ -46,8 +38,7 @@ function Signin() {
       let res = await r.text();
       console.log(data, res);
       await delay(2);
-    }
-      
+
       if (data.Username[0] === "0") {
         setError("pattern", { message: "first character must be letter" });
       }
@@ -146,6 +137,8 @@ function Signin() {
           >
             Sign In
           </button>
+          <hr/>
+          <span className="text-sm">Don't have an Account ? Signup</span>
         </form>
       </div>
     </div>

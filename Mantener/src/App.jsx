@@ -13,9 +13,10 @@ function App() {
 
   return (
     <>
-      {/* <Navbar/>  */}
+      <Navbar/> 
       {/* <Signup/> */}
-      <Signin/>
+      {/* <Signin/> */}
+      
       {/* <div>
         <button
           aria-label="Increment value"
