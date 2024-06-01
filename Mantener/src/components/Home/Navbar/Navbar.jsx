@@ -35,14 +35,14 @@ function Navbar() {
   return (
     <div>
       <div className="flex justify-center items-center my-2 text-white w-[100%] ">
-        <div className="Logo mx-20 flex justify-center w-[7rem] ">
+        <div className="Logo mx-[2%] flex justify-center w-[10%] ">
           <svg
-            width="30"
-            height="30"
+            width={`2rem`}
+            height={`2rem`}
             viewBox="0 0 52 52"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="mx-2"
+            className="mx-2 w-[2rem] h-[2rem]"
           >
             <path
               d="M0.5 25.9999C0.5 20.3734 2.31628 15.186 5.402 10.9641V41.0355C2.31634 36.8119 0.5 31.6147 0.5 25.9999Z"
@@ -68,9 +68,9 @@ function Navbar() {
           </span>
         </div>
 
-        <div className="flex justify-center items-center mx-10">
+        <div className="flex justify-center items-center mx-[1%] w-[50%]">
           <div
-            className={`border-[1px] border-white rounded-full  w-[25rem] h-[2rem] flex justify-start items-center ${
+            className={`border-[1px] border-white rounded-full  w-[90%] h-[2rem] flex justify-start items-center ${
               isClicked ? "hover:opacity-100" : "opacity-50"
             }`}
           >
@@ -99,13 +99,14 @@ function Navbar() {
             <GoSearch />
           </button>
         </div>
-
-        <ul className="flex justify-start gap-5 items-center mx-20">
+        
+        
+        <ul className="flex justify-center gap-5 items-center mx-[2%] w-[30%]">
           <li>
             <button
               onClick={onRefresh}
               className="Refresh flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40"
-            >
+              >
               {isRefreshed ? (
                 <AiOutlineLoading3Quarters className={`size-4 animate-spin`} />
               ) : (
@@ -131,9 +132,10 @@ function Navbar() {
             </button>
           </li>
         </ul>
+        
 
-        <Link to="/signin">
-          <button className="mx-10 rounded-full text-sm border-white border-[1px] w-20 text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500">
+        <Link to="/signin" className="w-[10%] mx-[2%]">
+          <button className="rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500">
             Sign In
           </button>
         </Link>

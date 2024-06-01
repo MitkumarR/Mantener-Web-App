@@ -1,14 +1,16 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { sign } from "../../../redux/signer/signerSlice";
+import { PiPlusLight } from "react-icons/pi";
 
 function Notes() {
   const issigned = useSelector((state) => state.signed.value);
+  // const issigned = true;
 
   return (
     <div className="w-[90%] flex justify-center items-center">
-      {issigned ? (
-        <div>Archive</div>
+      {/* {issigned ? (
+        <div>Notes</div>
       ) : (
         <div className="my-auto  mt-10 justify-center items-center w-[90%] h-[100%]">
           <div className="opacity-70">
@@ -31,7 +33,12 @@ function Notes() {
             </button>
           </span>
         </div>
-      )}
+      )} */}
+
+
+      <div>
+        <div><button><PiPlusLight /></button></div>
+      </div>
     </div>
   );
 }
