@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { sign } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   PiPlusLight,
@@ -19,6 +20,34 @@ function Notes() {
 
   const dispatch = useDispatch();
   // const issigned = true;
+  const [List, setList] = useState("");
+  const [Lists, setLists] = useState([]);
+
+  const [value, setValue] = useState("To do ...");
+
+  useEffect(() => {
+    const ListString = localStorage.getItem("Lists");
+    if (ListString) {
+      try {
+        const Lists = JSON.parse(ListString);
+        setLists(Lists);
+      } catch (error) {
+        console.error("Error parsing JSON from localStorage", error);
+      }
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    
+      setValue(inputValue);
+      setList(inputValue);
+
+  };
+
+  const saveToLocal = (params) =>{
+    localStorage.setItem("Lists", JSON.stringify(params));
+  }
 
   return (
     <div className=" fixed top-20 left-20 right-0 w-[90%] h-[100vh] justify-center">
@@ -48,7 +77,7 @@ function Notes() {
         </div>
       )} */}
 
-      <div className="h-[2rem] w-[100%] flex justify-start items-center">
+      <div className="h-[2rem] w-[100%] justify-start items-center">
         <div className="flex justfy-start p-2 items-center">
           <button
             onClick={() => dispatch(add())}
@@ -97,34 +126,23 @@ function Notes() {
           )}
         </div>
 
-        <div className="h-auto w-[50%] flex justify-center items-center">
-          {
-            whattoAdd === 1 ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Add a note..."
-                  className="border p-2 rounded focus:outline-none"
-                />
-              </div>
-            ) : whattoAdd === 2 ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Add a list..."
-                  className="border p-2 rounded"
-                />
-              </div>
-            ) : whattoAdd === 3 ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Add a drawing..."
-                  className="border p-2 rounded"
-                />
-              </div>
-            ) : null
-          }
+        <div className="h-auto w-[100%] flex justify-center items-center">
+          {whattoAdd === 1 ? (
+            <div className="border-[1px] w-[50%] h-auto p-2 rounded border-white bg-black">
+              <input
+                type="text"
+                placeholder="Title"
+                className=" bg-black w-[90%] focus:outline-none"
+              />
+              <br />
+              <textarea type="text" placeholder="Take notes..." className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"/>
+
+            </div>
+          ) : whattoAdd === 2 ? (
+            <div></div>
+          ) : whattoAdd === 3 ? (
+            <div></div>
+          ) : null}
         </div>
       </div>
     </div>

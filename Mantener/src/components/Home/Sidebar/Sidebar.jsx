@@ -2,6 +2,7 @@ import React from "react";
 import { HiOutlinePencil, HiPencil } from "react-icons/hi2";
 import { RiFolderDownloadLine, RiFolderDownloadFill } from "react-icons/ri";
 import { RiDeleteBinFill, RiDeleteBinLine } from "react-icons/ri";
+import { v4 as uuidv4 } from "uuid";
 function Sidebar() {
   return (
     <div className="w-[10%] fixed top-20 left-0 right-0">
