@@ -1,15 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useSelector, useDispatch } from "react-redux";
+import { getNote } from "./note";
+import { getTitle } from "./title";
+
+import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  value: [],
+    value: [],
 };
+
+
 
 export const arraySlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
     insert: (state) => {
-      state.value = !state.value;
+
+      state.value = [...state.value, { id: uuidv4(), Title, Note }];
     },
     delete: (state) => {
       state.value = !state.value;
