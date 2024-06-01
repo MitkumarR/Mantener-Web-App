@@ -4,6 +4,8 @@ import clickedReducer from './clicked/clickedSlice'
 import refreshedReducer from './refresher/refresherSlice'
 import griddedReducer from './gridded/griddedSlice'
 import signedReducer from './signer/signerSlice'
+import addedReducer from './adder/adderSlice'
+import addingReducer from './adding/addingSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +14,7 @@ export const store = configureStore({
     refreshed: refreshedReducer,
     gridded: griddedReducer,
     signed: signedReducer, 
+    added: addedReducer,
+    adding: addingReducer,
   },
 })

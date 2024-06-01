@@ -17,8 +17,7 @@ function App() {
   return (
     <>
       <Navbar />
-      
-      <div className="flex justify-start h-[100%]">
+      <div className="flex relative justify-start h-[100%]">
         <Sidebar/> 
         <Notes/>
       </div>
