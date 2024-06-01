@@ -33,15 +33,15 @@ function Navbar() {
     dispatch(refresh());
   };
   return (
-    <div>
-      <div className="flex justify-center items-center my-2 text-white w-[100%] ">
+    <div className="relative">
+      <div className="fixed flex border-b-[1px] border-white p-3  border-opacity-50 justify-center items-center my-2 text-white w-[100%] ">
         <div className="Logo mx-[2%] flex justify-center w-[10%] ">
           <svg
             width={`2rem`}
             height={`2rem`}
             viewBox="0 0 52 52"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg" 
             className="mx-2 w-[2rem] h-[2rem]"
           >
             <path

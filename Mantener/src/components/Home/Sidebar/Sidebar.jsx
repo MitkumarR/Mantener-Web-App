@@ -4,8 +4,8 @@ import { RiFolderDownloadLine, RiFolderDownloadFill } from "react-icons/ri";
 import { RiDeleteBinFill, RiDeleteBinLine } from "react-icons/ri";
 function Sidebar() {
   return (
-    <div className="w-[10%]">
-      <ul className="mx-10 my-5 border-r-white border-r-[1px] border-opacity-50 h-60">
+    <div className="w-[10%] relative my-36">
+      <ul className="fixed mx-10 border-r-white w-10 border-r-[1px] border-opacity-50 h-60">
         <li className="my-3">
           <button className="flex justify-center items-center rounded-full w-[2rem] h-[2rem] hover:bg-blue-500 hover:bg-opacity-40">
             <svg

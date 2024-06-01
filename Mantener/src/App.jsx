@@ -17,7 +17,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <hr className=" opacity-50"/>
+      
       <div className="flex justify-start h-[100%]">
         <Sidebar/> 
         <Notes/>

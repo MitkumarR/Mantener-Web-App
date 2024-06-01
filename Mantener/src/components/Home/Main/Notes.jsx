@@ -8,7 +8,7 @@ function Notes() {
   // const issigned = true;
 
   return (
-    <div className="w-[90%] flex justify-center items-center">
+    <div className="w-[90%] h-[100vh] flex justify-center items-center">
       {/* {issigned ? (
         <div>Notes</div>
       ) : (
@@ -36,8 +36,8 @@ function Notes() {
       )} */}
 
 
-      <div>
-        <div><button><PiPlusLight /></button></div>
+      <div className="h-[2rem]">
+        <div ><button className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full text-blue-500 w-[2rem] h-[2rem]"><PiPlusLight /></button></div>
       </div>
     </div>
   );
