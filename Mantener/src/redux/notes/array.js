@@ -1,33 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useSelector, useDispatch } from "react-redux";
-import { getNote } from "./note";
-import { getTitle } from "./title";
-
-import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-    value: [],
+  value: [],
 };
-
-
 
 export const arraySlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
-    insert: (state) => {
-
-      state.value = [...state.value, { id: uuidv4(), Title, Note }];
+    Insert: (state, action) => {
+      const { Id, Title, Note } = action.payload;
+      if (!Array.isArray(state.value)) {
+        console.error("Insert Error: state.value is not an array", state.value);
+        state.value = []; // Reset to empty array if not an array
+      }
+      console.log("Current state:", state.value); // Add logging
+      state.value = [...state.value, { Id, Title, Note }];
+      console.log("Updated state:", state.value); // Add logging
     },
-    delete: (state) => {
-      state.value = !state.value;
+    Update: (state, action) => {
+      state.value = action.payload;
     },
-    edit: (state) => {
-      state.value = !state.value;
+    Delete: (state, action) => {
+      state.value = state.value.filter((note) => note.Id !== action.payload);
     },
   },
 });
 
-export const { refresh } = arraySlice.actions;
+export const { Insert, Delete, Update } = arraySlice.actions;
 
 export default arraySlice.reducer;

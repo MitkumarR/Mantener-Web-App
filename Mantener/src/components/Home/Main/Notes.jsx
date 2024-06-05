@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { sign } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
+import { Insert, Delete, Update } from "../../../redux/notes/array";
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import {
   PiPlusLight,
@@ -18,37 +19,42 @@ function Notes() {
   const wantAdd = useSelector((state) => state.added.value);
 
   const whattoAdd = useSelector((state) => state.adding.value);
+  const Notes = useSelector((state) => state.notes.value);
 
   const dispatch = useDispatch();
   // const issigned = true;
-  const [List, setList] = useState("");
-  const [Lists, setLists] = useState([]);
 
-  const [value, setValue] = useState("To do ...");
+  const [T, setT] = React.useState("");
+  const [N, setN] = React.useState("");
 
   useEffect(() => {
-    const ListString = localStorage.getItem("Lists");
-    if (ListString) {
+    const NoteString = localStorage.getItem("Notes");
+    if (NoteString) {
       try {
-        const Lists = JSON.parse(ListString);
-        setLists(Lists);
+        const updatedNotes = JSON.parse(NoteString);
+        dispatch(Update(updatedNotes));
       } catch (error) {
         console.error("Error parsing JSON from localStorage", error);
       }
     }
-  }, []);
+  }, [dispatch]);
 
-  const handleChange = (e) => {
-    const inputValue = e.target.value;
-    
-      setValue(inputValue);
-      setList(inputValue);
-
+  const saveToLocal = (params) => {
+    localStorage.setItem("Notes", JSON.stringify(params));
   };
 
-  const saveToLocal = (params) =>{
-    localStorage.setItem("Lists", JSON.stringify(params));
-  }
+  const save_data = () => {
+    const Id = uuidv4();
+    const Title = T;
+    const Note = N;
+
+    dispatch(Insert({ Id, Note, Title }));
+    const updatedNotes = [...Notes, { Id, Title, Note }];
+    console.log(Notes);
+    saveToLocal(updatedNotes);
+    setT("");
+    setN("");
+  };
 
   return (
     <div className=" fixed top-20 left-20 right-0 w-[90%] h-[100vh] justify-center">
@@ -133,11 +139,30 @@ function Notes() {
               <input
                 type="text"
                 placeholder="Title"
+                value={T}
+                onChange={(e) => {
+                  setT(e.target.value);
+                }}
                 className=" bg-black w-[90%] focus:outline-none"
               />
               <br />
-              <textarea type="text" placeholder="Take notes..." className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"/>
-
+              <textarea
+                type="text"
+                placeholder="Take notes..."
+                value={N}
+                onChange={(e) => {
+                  setN(e.target.value);
+                }}
+                className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
+              />
+              <div className="w-full flex justify-end">
+                <button
+                  onClick={save_data}
+                  className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[10%] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           ) : whattoAdd === 2 ? (
             <div></div>
@@ -145,6 +170,15 @@ function Notes() {
             <div></div>
           ) : null}
         </div>
+
+        <ul className="flex mx-2 my-2 gap-3">
+          {Notes.map((item) => (
+            <li key={item.Id} className="border-[1px] border-opacity-50 border-white w-[20%] rounded">
+              <span className="text-sm ml-2 mt-2">{item.Title}</span><br />
+              <span className="text-xs ml-2 mt-2">{item.Note}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

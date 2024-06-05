@@ -7,8 +7,7 @@ import signedReducer from './signer/signerSlice'
 import addedReducer from './adder/adderSlice'
 import addingReducer from './adding/addingSlice'
 import arrayReducer from './notes/array'
-import noteReducer from './notes/note'
-import titleReducer from './notes/title'
+
 
 export const store = configureStore({
   reducer: {
@@ -20,8 +19,5 @@ export const store = configureStore({
     added: addedReducer,
     adding: addingReducer,
     notes: arrayReducer,
-    note: noteReducer,
-    title: titleReducer,
-
   },
 })
