@@ -8,7 +8,6 @@ export const signedSlice = createSlice({
   name: "signed",
   initialState,
   reducers: {
-
     signin: (state) => {
       state.value = true;
     },
