@@ -2,7 +2,8 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { usetemp } from "../../../redux/signer/tempUser";
 
-function HomePage() {
+import { Link } from "react-router-dom";
+function First() {
   const dispatch = useDispatch();
   return (
     <div className="my-auto fixed top-20 left-20 right-0 mt-10 justify-center items-center w-[90%] h-[100%]">
@@ -19,17 +20,14 @@ function HomePage() {
       </span>
 
       <span className="text-xs text-center my-2  flex justify-center items-center ">
-        <button
-          onClick={() => {
-            dispatch(usetemp());
-          }}
-          className="text-sm text-center text-black flex justify-center items-center duration-500 w-[20%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 "
-        >
-          Use Temporary Notes
-        </button>
+        <Link to="/notes" className="flex justify-center items-center w-[20%] h-10">
+          <button className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 ">
+            Use Temporary Notes
+          </button>
+        </Link>
       </span>
     </div>
   );
 }
 
-export default HomePage;
+export default First;

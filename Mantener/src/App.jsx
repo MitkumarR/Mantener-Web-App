@@ -3,59 +3,92 @@ import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { store } from "./redux/store.js";
-import { Provider } from "react-redux";
 
+import Signin from "./components/SignIn/Signin";
+import Signup from "./components/SignUp/Signup";
 import Navbar from "./components/Home/Navbar/Navbar";
 import Sidebar from "./components/Home/Sidebar/Sidebar";
 import Achive from "./components/Home/Main/Achive";
 import Notes from "./components/Home/Main/Notes";
 import Bin from "./components/Home/Main/Bin";
-import HomePage from "./components/Home/Main/HomePage";
+import First from "./components/Home/Main/First";
 
 import { usetemp } from "./redux/signer/tempUser";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/home",
-    element: <HomePage/>,
-  },
-  {
-    path: "/notes",
-    element: <Notes />,
-  },
-  {
-    path: "/bin",
-    element: <Bin />,
-  },
-  {
-    path: "/achive",
-    element: <Achive />,
-  },
-]);
 
 function App() {
   const tempUser = useSelector((state) => state.tempUser.value);
   const issigned = useSelector((state) => state.signed.value);
   const dispatch = useDispatch();
 
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <>
+          <Navbar />
+          <div className="flex relative justify-start h-[100%]">
+            <Sidebar />
+            <First /> 
+          </div>
+
+          <div></div>
+        </>
+      ),
+    },
+    {
+      path: "/signin",
+      element: <Signin />,
+    },
+    {
+      path: "/signup",
+      element: <Signup />,
+    },
+    {
+      path: "/notes",
+      element: 
+      <>
+          <Navbar />
+          <div className="flex relative justify-start h-[100%]">
+            <Sidebar />
+            <Notes />
+          </div>
+
+          <div></div>
+        </>
+      ,
+    },
+    {
+      path: "/bin",
+      element: 
+      <>
+          <Navbar />
+          <div className="flex relative justify-start h-[100%]">
+            <Sidebar />
+            <Bin />
+          </div>
+
+          <div></div>
+        </>,
+    },
+    {
+      path: "/achive",
+      element:
+      <>
+          <Navbar />
+          <div className="flex relative justify-start h-[100%]">
+            <Sidebar />
+            <Achive/>
+          </div>
+
+          <div></div>
+        </>
+       ,
+    },
+  ]);
+
   return (
     <>
-      <Navbar />
-      <div className="flex relative justify-start h-[100%]">
-        <Sidebar />
-        {issigned ? <Notes /> : <HomePage />}
-
-        {/* <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider> */}
-      </div>
-
-      <div></div>
+      <RouterProvider router={router} />
     </>
   );
 }
