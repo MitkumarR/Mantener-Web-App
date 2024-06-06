@@ -30,6 +30,7 @@ function Notes() {
 
   useEffect(() => {
     const NoteString = localStorage.getItem("Notes");
+
     if (NoteString) {
       try {
         const updatedNotes = JSON.parse(NoteString);
@@ -43,42 +44,7 @@ function Notes() {
       }
     }
 
-    // const handleBeforeUnload = (event) => {
-    //   if (tempUser) {
-    //     event.preventDefault();
-    //     event.returnValue = "";
-    //   }
-    // };
-
-    const handleBeforeUnload = (e) => {
-      if (tempUser) {
-        sessionStorage.setItem("isRefreshing", "true");
-        e.preventDefault();
-      }
-    };
-
-    const handleUnload = () => {
-      if (tempUser && sessionStorage.getItem("isRefreshing") !== "true") {
-        localStorage.removeItem("Notes"); // Clear local storage for temporary users
-      }
-      
-      sessionStorage.removeItem("isRefreshing");
-    };
-
-    // const handleVisibilityChange = () => {
-    //   if (document.visibilityState === "hidden" && tempUser) {
-    //     localStorage.removeItem("Notes"); // Clear local storage for temporary users
-    //   }
-    // };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    document.addEventListener("unload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      document.removeEventListener("unload", handleUnload);
-    };
-  }, [dispatch, tempUser]);
+  }, [dispatch]);
 
   const saveToLocal = (params) => {
     localStorage.setItem("Notes", JSON.stringify(params));
@@ -98,9 +64,6 @@ function Notes() {
 
   return (
     <div className=" fixed top-20 left-20 right-0 w-[90%] h-[100vh] justify-center">
-      {issigned ? (
-        <div>Notes</div>
-      ) : tempUser ? (
         <div className="h-[2rem] w-[100%] justify-start items-center">
           <div className="flex justfy-start p-2 items-center">
             <button
@@ -201,32 +164,6 @@ function Notes() {
             ))}
           </ul>
         </div>
-      ) : (
-        <div className="my-auto  mt-10 justify-center items-center w-[90%] h-[100%]">
-          <div className="opacity-70">
-            <span className="text-xs text-center  font-light flex justify-center items-center">
-              If you do not sign in, any notes you take will not be saved.
-              Please
-              <span className=" font-semibold"> &nbsp;Sign In &nbsp;</span> to
-              ensure your notes are securely stored and accessible in the
-              future.
-            </span>
-          </div>
-
-          <span className="text-xs text-center flex mt-32  opacity-50 justify-center items-center">
-            Continue without Signing In ?
-          </span>
-
-          <span className="text-xs text-center my-2  flex justify-center items-center ">
-            <button
-              onClick={() => dispatch(usetemp())}
-              className="text-sm text-center text-black flex justify-center items-center duration-500 w-[20%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 "
-            >
-              Use Temporary Notes
-            </button>
-          </span>
-        </div>
-      )}
     </div>
   );
 }
