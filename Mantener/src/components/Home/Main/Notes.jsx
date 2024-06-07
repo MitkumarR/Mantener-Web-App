@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { sign } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
@@ -28,6 +28,14 @@ function Notes() {
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setN(value);
+    // Replace newline characters with <br/>
+    const formatted = value.replace(/\n/g, '<br/>');
+    setFormattedNote(formatted);
+  };
+
   useEffect(() => {
     const NoteString = localStorage.getItem("Notes");
 
@@ -43,7 +51,6 @@ function Notes() {
         console.error("Error parsing JSON from localStorage", error);
       }
     }
-
   }, [dispatch]);
 
   const saveToLocal = (params) => {
@@ -64,106 +71,109 @@ function Notes() {
 
   return (
     <div className=" fixed top-20 left-20 right-0 w-[90%] h-[100vh] justify-center">
-        <div className="h-[2rem] w-[100%] justify-start items-center">
-          <div className="flex justfy-start p-2 items-center">
-            <button
-              onClick={() => dispatch(add())}
-              className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
-            >
-              <PiPlusLight
-                className={`${wantAdd ? "rotate-45" : ""} duration-300`}
-              />
-            </button>
-            {wantAdd && (
-              <ul className="flex justify-center mx-5 items-center gap-3 duration-300">
-                <li>
-                  <button
-                    onClick={() => {
-                      dispatch(note());
-                      dispatch(add());
-                    }}
-                    className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
-                  >
-                    <PiNoteThin />
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      dispatch(list());
-                      dispatch(add());
-                    }}
-                    className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
-                  >
-                    <PiListChecksThin />
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      dispatch(draw());
-                      dispatch(add());
-                    }}
-                    className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
-                  >
-                    <PiPaintBrushThin />
-                  </button>
-                </li>
-              </ul>
-            )}
-          </div>
-
-          <div className="h-auto w-[100%] flex justify-center items-center">
-            {whattoAdd === 1 ? (
-              <div className="border-[1px] w-[50%] h-auto p-2 rounded border-white bg-black">
-                <input
-                  type="text"
-                  placeholder="Title"
-                  value={T}
-                  onChange={(e) => {
-                    setT(e.target.value);
+      <div className="h-[2rem] w-[100%] justify-start items-center">
+        <div className="flex justfy-start p-2 items-center">
+          <button
+            onClick={() => dispatch(add())}
+            className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+          >
+            <PiPlusLight
+              className={`${wantAdd ? "rotate-45" : ""} duration-300`}
+            />
+          </button>
+          {wantAdd && (
+            <ul className="flex justify-center mx-5 items-center gap-3 duration-300">
+              <li>
+                <button
+                  onClick={() => {
+                    dispatch(note());
+                    dispatch(add());
                   }}
-                  className=" bg-black w-[90%] focus:outline-none"
-                />
-                <br />
-                <textarea
+                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                >
+                  <PiNoteThin />
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    dispatch(list());
+                    dispatch(add());
+                  }}
+                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                >
+                  <PiListChecksThin />
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    dispatch(draw());
+                    dispatch(add());
+                  }}
+                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                >
+                  <PiPaintBrushThin />
+                </button>
+              </li>
+            </ul>
+          )}
+        </div>
+
+        <div className="h-auto w-[100%] flex justify-center items-center">
+          {whattoAdd === 1 ? (
+            <div className="border-[1px] w-[50%] h-auto p-2 rounded border-white bg-black">
+              <input
+                type="text"
+                placeholder="Title"
+                value={T}
+                onChange={(e) => {
+                  setT(e.target.value);
+                }}
+                className=" bg-black w-[90%] focus:outline-none"
+              />
+              <br />
+
+              <textarea
                   type="text"
                   placeholder="Take notes..."
                   value={N}
-                  onChange={(e) => {
-                    setN(e.target.value);
-                  }}
+                  onChange={handleInputChange}
+                  // onChange={(e) => {
+                  //   setN(e.target.value);
+                  // }}
                   className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
                 />
-                <div className="w-full flex justify-end">
-                  <button
-                    onClick={save_data}
-                    className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[10%] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
-                  >
-                    Save
-                  </button>
-                </div>
+            
+              <div className="w-full flex justify-end">
+                <button
+                  onClick={save_data}
+                  className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[10%] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
+                >
+                  Save
+                </button>
               </div>
-            ) : whattoAdd === 2 ? (
-              <div></div>
-            ) : whattoAdd === 3 ? (
-              <div></div>
-            ) : null}
-          </div>
-
-          <ul className="flex mx-2 my-2 gap-3">
-            {Notes.map((item) => (
-              <li
-                key={item.Id}
-                className="border-[1px] border-opacity-50 border-white w-[20%] rounded"
-              >
-                <span className="text-sm ml-2 mt-2">{item.Title}</span>
-                <br />
-                <span className="text-xs ml-2 mt-2">{item.Note}</span>
-              </li>
-            ))}
-          </ul>
+            </div>
+          ) : whattoAdd === 2 ? (
+            <div></div>
+          ) : whattoAdd === 3 ? (
+            <div></div>
+          ) : null}
         </div>
+
+        <ul className="flex mx-2 my-2 gap-3">
+          {Notes.map((item) => (
+            <li
+              key={item.Id}
+              className="border-[1px] border-opacity-50 border-white w-[20%] rounded"
+            >
+              <span className="text-sm ml-2 mt-2">{item.Title}</span>
+              <br />
+              <span className="text-xs ml-2 mt-2" dangerouslySetInnerHTML={{ __html: item.Note }}></span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
