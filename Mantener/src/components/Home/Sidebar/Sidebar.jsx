@@ -1,15 +1,17 @@
 import React from "react";
-
+import { note, achive, bin } from "../../../redux/clicked/sidebarSlice";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 
 function Sidebar() {
+
+  
   return (
     <div className="w-[10%] fixed top-20 left-0 right-0">
       <ul className="mx-10 border-r-white w-10 border-r-[1px] border-opacity-50 h-60">
         <li className="my-3">
           <Link to="/notes">
-            <button className="flex justify-center items-center rounded-full w-[2rem] h-[2rem] hover:bg-blue-500 hover:bg-opacity-40 ">
+            <button onClickclassName="flex justify-center items-center rounded-full w-[2rem] h-[2rem] hover:bg-blue-500 hover:bg-opacity-40 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
