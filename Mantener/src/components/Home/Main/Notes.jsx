@@ -3,9 +3,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { sign } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
-import { Insert, Delete, Update } from "../../../redux/notes/array";
+import { Insert, Delete, Update, Hover, Achive, Pin } from "../../../redux/notes/array";
 import { usetemp } from "../../../redux/signer/tempUser";
 
+import {
+  PiPushPinThin,
+  PiTrashLight,
+  PiTrayArrowDownLight,
+} from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -28,12 +33,15 @@ function Notes() {
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
 
+  const [formattedNote, setFormattedNote] = useState("");
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setN(value);
     // Replace newline characters with <br/>
-    const formatted = value.replace(/\n/g, '<br/>');
+    const formatted = value.replace(/\n/g, "<br>");
     setFormattedNote(formatted);
+    // setN(formattedNote);
   };
 
   useEffect(() => {
@@ -60,17 +68,25 @@ function Notes() {
   const save_data = () => {
     const Id = uuidv4();
     const Title = T;
-    const Note = N;
+    const Note = formattedNote;
+    const Achived = false;
+    const Deleted = false;
+    const Pinned = false;
+    const Hovered = false;
 
-    dispatch(Insert({ Id, Note, Title }));
-    const updatedNotes = [...Notes, { Id, Title, Note }];
+    dispatch(Insert({ Id, Note, Title, Deleted, Pinned, Achived, Hovered }));
+    const updatedNotes = [
+      ...Notes,
+      { Id, Title, Note, Deleted, Pinned, Achived, Hovered },
+    ];
     saveToLocal(updatedNotes);
     setT("");
+    setFormattedNote("");
     setN("");
   };
 
   return (
-    <div className=" fixed top-20 left-20 right-0 w-[90%] h-[100vh] justify-center">
+    <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-[2rem] w-[100%] justify-start items-center">
         <div className="flex justfy-start p-2 items-center">
           <button
@@ -135,16 +151,16 @@ function Notes() {
               <br />
 
               <textarea
-                  type="text"
-                  placeholder="Take notes..."
-                  value={N}
-                  onChange={handleInputChange}
-                  // onChange={(e) => {
-                  //   setN(e.target.value);
-                  // }}
-                  className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
-                />
-            
+                type="text"
+                placeholder="Take notes..."
+                value={N}
+                onChange={handleInputChange}
+                // onChange={(e) => {
+                //   setN(e.target.value);
+                // }}
+                className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
+              />
+
               <div className="w-full flex justify-end">
                 <button
                   onClick={save_data}
@@ -161,18 +177,58 @@ function Notes() {
           ) : null}
         </div>
 
-        <ul className="flex mx-2 my-2 gap-3">
+        <div className="flex flex-wrap grid-cols-5 h-fit mx-2 my-2 gap-2 ">
           {Notes.map((item) => (
-            <li
+            <div
               key={item.Id}
-              className="border-[1px] border-opacity-50 border-white w-[20%] rounded"
+              onMouseEnter={() => dispatch(Hover(item.Id))}
+              onMouseLeave={() => dispatch(Hover(item.Id))}
+              className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
+                item.Hovered ? "border-opacity-50" : "border-opacity-30"
+              }`}
             >
-              <span className="text-sm ml-2 mt-2">{item.Title}</span>
-              <br />
-              <span className="text-xs ml-2 mt-2" dangerouslySetInnerHTML={{ __html: item.Note }}></span>
-            </li>
+              <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
+                <h6>{item.Title}</h6>
+                <button
+                
+                  className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
+                    item.Hovered ?  "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  <PiPushPinThin />
+                </button>
+              </div>
+              <p
+                className="text-xs px-2 py-1 text-left w-full break-all"
+                dangerouslySetInnerHTML={{ __html: item.Note }}
+              ></p>
+              <ul
+                className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
+                  item.Hovered ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <li className="flex justify-start items-center">
+                  <button
+                    onClick={() => dispatch(Achive(item.Id))}
+                    className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
+                  >
+                    <PiTrayArrowDownLight />
+                  </button>
+                </li>
+                <li className="flex justify-start items-center">
+                  <button
+                    onClick={() => dispatch(Delete(item.Id))}
+                    className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
+                  >
+                    <PiTrashLight />
+                  </button>
+                </li>
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
+
+        <div className="h-10"></div>
       </div>
     </div>
   );

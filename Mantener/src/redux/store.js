@@ -8,7 +8,6 @@ import addedReducer from './adder/adderSlice'
 import addingReducer from './adding/addingSlice'
 import arrayReducer from './notes/array'
 import tempUserReducer from './signer/tempUser'
-
 import sidebarReducer from './clicked/sidebarSlice'
 
 export const store = configureStore({
@@ -23,5 +22,7 @@ export const store = configureStore({
     notes: arrayReducer,
     tempUser: tempUserReducer,
     sidebar: sidebarReducer,
+
+
   },
 })

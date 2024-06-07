@@ -33,7 +33,7 @@ function Navbar() {
     dispatch(refresh());
   };
   return (
-    <div className="fixed top-0 left-0 right-0">
+    <div className="fixed top-0 left-0 right-0 z-10 bg-black">
       <div className="flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] ">
         <div className="Logo mx-[2%] flex justify-center w-[10%] ">
           <svg
