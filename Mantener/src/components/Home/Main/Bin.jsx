@@ -70,7 +70,17 @@ function Bin() {
                         <button
                           onClick={() => {
                             dispatch(Delete(item.Id));
-                            saveToLocal(Notes);
+                            const newNotes = Notes.map((note) =>
+                              note.Id === item.Id
+                                ? {
+                                    ...note,
+                                    Deleted: !note.Deleted,
+                                    Archived: false,
+                                    Pinned: false,
+                                  }
+                                : note
+                            );
+                            saveToLocal(newNotes);
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >
@@ -81,7 +91,8 @@ function Bin() {
                         <button
                           onClick={() => {
                             dispatch(Remove(item.Id));
-                            saveToLocal(Notes);
+                            const newNotes = Notes.filter((note) => note.Id !== item.Id);
+                            saveToLocal(newNotes);
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >

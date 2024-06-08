@@ -66,7 +66,17 @@ function Archived() {
                         <button
                           onClick={() => {
                             dispatch(Archive(item.Id));
-                            saveToLocal(Notes);
+                            const newNotes = Notes.map((note) =>
+                              note.Id === item.Id
+                                ? {
+                                    ...note,
+                                    Archived: !note.Archived,
+                                    Deleted: false,
+                                    Pinned: false,
+                                  }
+                                : note
+                            );
+                            saveToLocal(newNotes);
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >
@@ -77,7 +87,17 @@ function Archived() {
                         <button
                           onClick={() => {
                             dispatch(Delete(item.Id));
-                            saveToLocal(Notes);
+                            const newNotes = Notes.map((note) =>
+                              note.Id === item.Id
+                                ? {
+                                    ...note,
+                                    Deleted: !note.Deleted,
+                                    Archived: false,
+                                    Pinned: false,
+                                  }
+                                : note
+                            );
+                            saveToLocal(newNotes);
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >
