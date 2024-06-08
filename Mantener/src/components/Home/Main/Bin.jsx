@@ -51,7 +51,7 @@ function Bin() {
                     onMouseEnter={() => dispatch(Hover(item.Id))}
                     onMouseLeave={() => dispatch(Hover(item.Id))}
                     className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
-                      !item.Hovered ? "border-opacity-50" : "border-opacity-30"
+                      item.Hovered ? "border-opacity-50" : "border-opacity-30"
                     }`}
                   >
                     <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
@@ -63,7 +63,7 @@ function Bin() {
                     ></p>
                     <ul
                       className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
-                        !item.Hovered ? "opacity-100" : "opacity-0"
+                        item.Hovered ? "opacity-100" : "opacity-0"
                       }`}
                     >
                       <li className="flex justify-start items-center">

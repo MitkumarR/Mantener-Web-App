@@ -195,8 +195,14 @@ function Notes() {
               item.Pinned && (
                 <div
                   key={item.Id}
-                  onMouseEnter={() => dispatch(Hover(item.Id))}
-                  onMouseLeave={() => dispatch(Hover(item.Id))}
+                  onMouseEnter={() => {
+                    // dispatch(Hover(item.Id));
+                    item.Hovered = true;
+                  }}
+                  onMouseLeave={() => {
+                    // dispatch(Hover(item.Id));
+                    item.Hovered = false;
+                  }}
                   className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
                     item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
@@ -290,8 +296,14 @@ function Notes() {
               !item.Deleted && (
                 <div
                   key={item.Id}
-                  onMouseEnter={() => dispatch(Hover(item.Id))}
-                  onMouseLeave={() => dispatch(Hover(item.Id))}
+                  onMouseEnter={() => {
+                    // dispatch(Hover(item.Id));
+                    item.Hovered === true;
+                  }}
+                  onMouseLeave={() => {
+                    // dispatch(Hover(item.Id));
+                    item.Hovered === false;
+                  }}
                   className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
                     item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
