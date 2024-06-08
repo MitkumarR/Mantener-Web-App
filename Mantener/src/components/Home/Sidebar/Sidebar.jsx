@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { note, achive, bin } from "../../../redux/clicked/sidebarSlice";
+import { note, archive, bin } from "../../../redux/clicked/sidebarSlice";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { PiTrashLight, PiTrayArrowDownLight, PiNotePencilLight  } from "react-icons/pi";
@@ -28,9 +28,9 @@ function Sidebar() {
           </Link>
         </li>
         <li className="my-3">
-          <Link to="/achive">
+          <Link to="/archive">
             <button
-              onClick={() => dispatch(achive())}
+              onClick={() => dispatch(archive())}
               className={`flex justify-center items-center rounded-full w-[2rem] h-[2rem] duration-150 ${
                 opt === 1
                   ? "bg-blue-500 text-black duration-150"

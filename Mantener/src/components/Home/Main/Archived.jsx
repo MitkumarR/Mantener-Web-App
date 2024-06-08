@@ -1,18 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import {
-  Delete,
-  Update,
-  Hover,
-  Archive,
-  Remove,
-} from "../../../redux/notes/array";
+import { Delete, Update, Hover, Archive } from "../../../redux/notes/array";
 import { usetemp } from "../../../redux/signer/tempUser";
 
-import { PiXCircleLight, PiDownloadSimpleLight } from "react-icons/pi";
+import { PiTrashLight, PiTrayArrowUpLight } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";
-function Bin() {
+
+function Archived() {
   const Notes = useSelector((state) => state.notes.value);
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
@@ -38,6 +33,7 @@ function Bin() {
   const saveToLocal = (params) => {
     localStorage.setItem("Notes", JSON.stringify(params));
   };
+
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-[2rem] w-[100%] justify-start items-center">
@@ -45,13 +41,13 @@ function Bin() {
           {loaded &&
             Notes.map(
               (item) =>
-                item.Deleted && (
+                item.Archived && (
                   <div
                     key={item.Id}
                     onMouseEnter={() => dispatch(Hover(item.Id))}
                     onMouseLeave={() => dispatch(Hover(item.Id))}
                     className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
-                      !item.Hovered ? "border-opacity-50" : "border-opacity-30"
+                      item.Hovered ? "border-opacity-50" : "border-opacity-30"
                     }`}
                   >
                     <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
@@ -63,9 +59,20 @@ function Bin() {
                     ></p>
                     <ul
                       className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
-                        !item.Hovered ? "opacity-100" : "opacity-0"
+                        item.Hovered ? "opacity-100" : "opacity-0"
                       }`}
                     >
+                      <li className="flex justify-start items-center">
+                        <button
+                          onClick={() => {
+                            dispatch(Archive(item.Id));
+                            saveToLocal(Notes);
+                          }}
+                          className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
+                        >
+                          <PiTrayArrowUpLight />
+                        </button>
+                      </li>
                       <li className="flex justify-start items-center">
                         <button
                           onClick={() => {
@@ -74,18 +81,7 @@ function Bin() {
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >
-                          <PiDownloadSimpleLight />
-                        </button>
-                      </li>
-                      <li className="flex justify-start items-center">
-                        <button
-                          onClick={() => {
-                            dispatch(Remove(item.Id));
-                            saveToLocal(Notes);
-                          }}
-                          className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
-                        >
-                          <PiXCircleLight />
+                          <PiTrashLight />
                         </button>
                       </li>
                     </ul>
@@ -100,4 +96,4 @@ function Bin() {
   );
 }
 
-export default Bin;
+export default Archived;

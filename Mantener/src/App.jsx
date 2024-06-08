@@ -8,7 +8,7 @@ import Signin from "./components/SignIn/Signin";
 import Signup from "./components/SignUp/Signup";
 import Navbar from "./components/Home/Navbar/Navbar";
 import Sidebar from "./components/Home/Sidebar/Sidebar";
-import Achive from "./components/Home/Main/Achive";
+import Archived from "./components/Home/Main/Archived";
 import Notes from "./components/Home/Main/Notes";
 import Bin from "./components/Home/Main/Bin";
 import First from "./components/Home/Main/First";
@@ -71,13 +71,13 @@ function App() {
         </>,
     },
     {
-      path: "/achive",
+      path: "/archive",
       element:
       <>
           <Navbar />
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
-            <Achive/>
+            <Archived/>
           </div>
 
           <div></div>

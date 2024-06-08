@@ -11,7 +11,7 @@ export const sidebarSlice = createSlice({
     note: (state) => {
       state.value = 0;
     },
-    achive: (state) => {
+    archive: (state) => {
       state.value = 1;
     },
     bin: (state) => {
@@ -21,6 +21,6 @@ export const sidebarSlice = createSlice({
   },
 });
 
-export const { note, achive, bin } = sidebarSlice.actions;
+export const { note, archive, bin } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;
