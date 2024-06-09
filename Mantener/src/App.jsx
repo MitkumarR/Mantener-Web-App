@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState, useRef} from "react";
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -19,6 +19,26 @@ function App() {
   const tempUser = useSelector((state) => state.tempUser.value);
   const issigned = useSelector((state) => state.signed.value);
   const dispatch = useDispatch();
+  
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const confirmationMessage = 'Are you sure you want to leave? All your data will be erased.';
+      event.returnValue = confirmationMessage;
+      return confirmationMessage;
+    };
+
+    const handleUnload = () => {
+      localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('unload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, []);
 
   const router = createBrowserRouter([
     {
