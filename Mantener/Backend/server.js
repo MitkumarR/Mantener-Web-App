@@ -1,27 +1,11 @@
-import cors from "cors"
-import express from "express"
-import bodyParser from "body-parser"
-
+const express = require('express')
 const app = express()
 const port = 3000
 
-
-app.use(cors());
-app.use(bodyParser.json());
-
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-})
-
-app.post('/', (req, res) => {
-    
-    //   console.log(req.body, req.form, req);
-    console.log(req.body);
-    
-    res.send('data recieved');
-
+  res.send('Hello World!')
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port http://localhost:${port}`)
 })

@@ -1,8 +1,8 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 
 import Signin from "./components/SignIn/Signin";
 import Signup from "./components/SignUp/Signup";
@@ -19,26 +19,29 @@ function App() {
   const tempUser = useSelector((state) => state.tempUser.value);
   const issigned = useSelector((state) => state.signed.value);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      const confirmationMessage = 'Are you sure you want to leave? All your data will be erased.';
-      event.returnValue = confirmationMessage;
-      return confirmationMessage;
-    };
+    if (tempUser) {
+      const handleBeforeUnload = (event) => {
+        const confirmationMessage =
+          "Are you sure you want to leave? All your data will be erased.";
+        event.returnValue = confirmationMessage;
+        return confirmationMessage;
+      };
 
-    const handleUnload = () => {
-      localStorage.clear();
-    };
+      const handleUnload = () => {
+        localStorage.clear();
+      };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('unload', handleUnload);
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("unload", handleUnload);
 
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('unload', handleUnload);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("unload", handleUnload);
+      };
+    }
+  }, [tempUser]);
 
   const router = createBrowserRouter([
     {
@@ -48,7 +51,7 @@ function App() {
           <Navbar />
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
-            <First /> 
+            <First />
           </div>
 
           <div></div>
@@ -65,8 +68,8 @@ function App() {
     },
     {
       path: "/notes",
-      element: 
-      <>
+      element: (
+        <>
           <Navbar />
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
@@ -75,12 +78,12 @@ function App() {
 
           <div></div>
         </>
-      ,
+      ),
     },
     {
       path: "/bin",
-      element: 
-      <>
+      element: (
+        <>
           <Navbar />
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
@@ -88,21 +91,22 @@ function App() {
           </div>
 
           <div></div>
-        </>,
+        </>
+      ),
     },
     {
       path: "/archive",
-      element:
-      <>
+      element: (
+        <>
           <Navbar />
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
-            <Archived/>
+            <Archived />
           </div>
 
           <div></div>
         </>
-       ,
+      ),
     },
   ]);
 

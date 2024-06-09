@@ -10,6 +10,7 @@ export const tempUserSlice = createSlice({
   reducers: {
     usetemp: (state) => {
       state.value = true;
+      console.log(state.value);
     },
   },
 });

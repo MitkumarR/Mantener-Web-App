@@ -18,6 +18,7 @@ function Navbar() {
   const isRefreshed = useSelector((state) => state.refreshed.value);
   const isgridded = useSelector((state) => state.gridded.value);
   const theme = useSelector((state) => state.theme.value);
+  const tempUser = useSelector((state) => state.tempUser.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
@@ -203,6 +204,9 @@ function Navbar() {
             </ul>
           </div>
         )}
+        {
+          tempUser && <div className="text-[10px] text-blue-500 w-[8rem]">Using for short time</div>
+        }
         <Link to="/signin" className={`w-[10%] mx-[2%]`}>
           <button className={`rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500`}>
             Sign In
