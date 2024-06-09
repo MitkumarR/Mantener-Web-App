@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { change } from "../../../redux/clicked/clickedSlice";
 import { refresh } from "../../../redux/refresher/refresherSlice";
 import { grid, update } from "../../../redux/gridded/griddedSlice";
+import { white, black, updatetheme } from "../../../redux/theme/themeSlice";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
@@ -16,11 +17,16 @@ function Navbar() {
   const isClicked = useSelector((state) => state.clicked.value);
   const isRefreshed = useSelector((state) => state.refreshed.value);
   const isgridded = useSelector((state) => state.gridded.value);
+  const theme = useSelector((state) => state.theme.value);
+
+  const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const selected_grid = localStorage.getItem("isgridded");
+    const selected_theme = localStorage.getItem("theme");
+
     if (selected_grid) {
       try {
         const parsedGrid = JSON.parse(selected_grid);
@@ -29,11 +35,26 @@ function Navbar() {
         console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
+    if (selected_theme) {
+      try {
+        const parsedTheme = JSON.parse(selected_theme);
+        dispatch(update(parsedTheme));
+      } catch (error) {
+        console.error("Failed to parse localStorage item 'theme':", error);
+      }
+    }
   }, [dispatch]);
 
   const saveToLocal = (params) => {
     try {
       localStorage.setItem("isgridded", JSON.stringify(params));
+    } catch (error) {
+      console.error("Failed to save to localStorage:", error);
+    }
+  };
+  const saveToLocalTheme = (params) => {
+    try {
+      localStorage.setItem("theme", JSON.stringify(params));
     } catch (error) {
       console.error("Failed to save to localStorage:", error);
     }
@@ -52,16 +73,21 @@ function Navbar() {
     await delay(2);
     dispatch(refresh());
   };
+
+  const handleisClickedOnSetting = () => {
+    setisClickedOnSetting(!isClickedOnSetting);
+  };
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-10 bg-black">
-      <div className="flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] ">
-        <div className="Logo mx-[2%] flex justify-center w-[10%] ">
+    <div className={`fixed top-0 left-0 right-0 z-10 bg-black`}>
+      <div className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] `}>
+        <div className={`Logo mx-[2%] flex justify-center w-[10%]`}>
           <svg
             width={`2rem`}
             height={`2rem`}
             viewBox="0 0 52 52"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg" 
+            xmlns="http://www.w3.org/2000/svg"
             className="mx-2 w-[2rem] h-[2rem]"
           >
             <path
@@ -88,7 +114,7 @@ function Navbar() {
           </span>
         </div>
 
-        <div className="flex justify-center items-center mx-[1%] w-[50%]">
+        <div className={`flex justify-center items-center mx-[1%] w-[50%]`}>
           <div
             className={`border-[1px] border-white rounded-full  w-[90%] h-[2rem] flex justify-start items-center ${
               isClicked ? "hover:opacity-100" : "opacity-50"
@@ -98,14 +124,14 @@ function Navbar() {
               type="text"
               name="Searchbar"
               onClick={() => dispatch(change())}
-              className="bg-black focus:outline-none text-sm mx-3 w-[87%]"
+              className={`bg-black focus:outline-none text-sm mx-3 w-[87%]`}
               placeholder="Search By Title"
             />
 
             {isClicked && (
               <button
                 onClick={() => dispatch(change())}
-                className="rounded-full hover:bg-zinc-800 w-[1.5rem] h-[1.5rem] flex justify-center items-center "
+                className={`rounded-full hover:bg-zinc-800 w-[1.5rem] h-[1.5rem] flex justify-center items-center `}
               >
                 <RxCross1 className="size-3" />
               </button>
@@ -119,14 +145,13 @@ function Navbar() {
             <GoSearch />
           </button>
         </div>
-        
-        
-        <ul className="flex justify-center gap-5 items-center mx-[2%] w-[30%]">
+
+        <ul className={`flex justify-center gap-5 items-center mx-[2%] w-[30%]`}>
           <li>
             <button
               onClick={onRefresh}
-              className="Refresh flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40"
-              >
+              className={`Refresh flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40`}
+            >
               {isRefreshed ? (
                 <AiOutlineLoading3Quarters className={`size-4 animate-spin`} />
               ) : (
@@ -136,11 +161,12 @@ function Navbar() {
           </li>
           <li>
             <button
-              onClick={() => {dispatch(grid());
+              onClick={() => {
+                dispatch(grid());
                 const newGrid = !isgridded;
                 saveToLocal(newGrid);
               }}
-              className="GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40"
+              className={`GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40`}
             >
               {isgridded ? (
                 <CiGrid41 className={`size-5`} />
@@ -150,15 +176,35 @@ function Navbar() {
             </button>
           </li>
           <li>
-            <button className="Setting flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40">
+            <button
+              onClick={handleisClickedOnSetting}
+              className={`Setting flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40`}
+            >
               <CiSettings className="size-5" />
             </button>
           </li>
         </ul>
-        
 
-        <Link to="/signin" className="w-[10%] mx-[2%]">
-          <button className="rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500">
+        {isClickedOnSetting && (
+          <div className={`absolute right-[9rem] top-[4.5rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}>
+            <ul className={`p-1`}>
+              <li className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}>
+                <button
+                  onClick={() => {
+                    theme === "black" ? dispatch(white()) : dispatch(black());
+                  }}
+                >
+                  {theme === "black" ? "Light Mode" : "Dark Mode"}
+                </button>
+              </li>
+              <li className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}>
+                <button>Help</button>
+              </li>
+            </ul>
+          </div>
+        )}
+        <Link to="/signin" className={`w-[10%] mx-[2%]`}>
+          <button className={`rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500`}>
             Sign In
           </button>
         </Link>

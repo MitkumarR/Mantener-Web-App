@@ -98,7 +98,7 @@ function Notes() {
 
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
-      <div className="h-[2rem] w-[100%] justify-start items-center">
+      <div className="h-fit w-[100%] justify-start items-center">
         <div className="flex justfy-start p-2 items-center">
           <button
             onClick={() => dispatch(add())}
