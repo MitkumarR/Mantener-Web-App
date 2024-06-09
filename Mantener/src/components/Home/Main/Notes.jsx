@@ -36,6 +36,7 @@ function Notes() {
   const tempUser = useSelector((state) => state.tempUser.value);
   const Notes = useSelector((state) => state.notes.value);
 
+  const isgridded = useSelector((state) => state.gridded.value);
   const dispatch = useDispatch();
   // const issigned = true;
 
@@ -56,7 +57,6 @@ function Notes() {
 
   useEffect(() => {
     const NoteString = localStorage.getItem("Notes");
-
     if (NoteString) {
       try {
         const updatedNotes = JSON.parse(NoteString);
@@ -189,22 +189,26 @@ function Notes() {
         </div>
 
         <div className="text-sm opacity-50">Pinned</div>
-        <div className="flex flex-wrap grid-cols-5 h-fit mx-2 my-2 gap-2 ">
+        <div
+          className={`${
+            isgridded ? "grid justify-center" : "flex flex-wrap grid-cols-5"
+          } h-fit mx-2 my-2 gap-2 `}
+        >
           {Notes.map(
             (item) =>
               item.Pinned && (
                 <div
                   key={item.Id}
                   onMouseEnter={() => {
-                    // dispatch(Hover(item.Id));
-                    item.Hovered = true;
+                    dispatch(Hover(item.Id));
                   }}
                   onMouseLeave={() => {
-                    // dispatch(Hover(item.Id));
-                    item.Hovered = false;
+                    dispatch(Hover(item.Id));
                   }}
-                  className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
-                    item.Hovered ? "border-opacity-50" : "border-opacity-30"
+                  className={`block border-[1px]  place-self-auto border-white ${
+                    isgridded ? "w-[30rem]" : "w-[13rem]"
+                  } h-fit rounded row-end-auto row-start-auto overflow-hidden ${
+                    !item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
                 >
                   <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
@@ -219,13 +223,14 @@ function Notes() {
                                 Pinned: !note.Pinned,
                                 Deleted: false,
                                 Archived: false,
+                                Hovered: false,
                               }
                             : note
                         );
                         saveToLocal(newNotes);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
-                        item.Hovered ? "opacity-100" : "opacity-0"
+                        !item.Hovered ? "opacity-100" : "opacity-0"
                       }`}
                     >
                       <PiPushPinFill />
@@ -237,7 +242,7 @@ function Notes() {
                   ></p>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
-                      item.Hovered ? "opacity-100" : "opacity-0"
+                      !item.Hovered ? "opacity-100" : "opacity-0"
                     }`}
                   >
                     <li className="flex justify-start items-center">
@@ -251,6 +256,7 @@ function Notes() {
                                   Archived: !note.Archived,
                                   Deleted: false,
                                   Pinned: false,
+                                  Hovered: false,
                                 }
                               : note
                           );
@@ -272,6 +278,7 @@ function Notes() {
                                   Deleted: !note.Deleted,
                                   Archived: false,
                                   Pinned: false,
+                                  Hovered: false,
                                 }
                               : note
                           );
@@ -288,7 +295,11 @@ function Notes() {
           )}
         </div>
         <div className="text-sm opacity-50">Others</div>
-        <div className="flex flex-wrap grid-cols-5 h-fit mx-2 my-2 gap-2 ">
+        <div
+          className={`${
+            isgridded ? "grid justify-center" : "flex flex-wrap grid-cols-5"
+          } h-fit mx-2 my-2 gap-2 `}
+        >
           {Notes.map(
             (item) =>
               !item.Pinned &&
@@ -297,14 +308,14 @@ function Notes() {
                 <div
                   key={item.Id}
                   onMouseEnter={() => {
-                    // dispatch(Hover(item.Id));
-                    item.Hovered === true;
+                    dispatch(Hover(item.Id));
                   }}
                   onMouseLeave={() => {
-                    // dispatch(Hover(item.Id));
-                    item.Hovered === false;
+                    dispatch(Hover(item.Id));
                   }}
-                  className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
+                  className={`block border-[1px]  place-self-auto border-white ${
+                    isgridded ? "w-[30rem]" : "w-[13rem]"
+                  }  h-fit rounded row-end-auto row-start-auto overflow-hidden ${
                     item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
                 >
@@ -320,6 +331,7 @@ function Notes() {
                                 Pinned: !note.Pinned,
                                 Deleted: false,
                                 Archived: false,
+                                Hovered: false,
                               }
                             : note
                         );
@@ -352,6 +364,7 @@ function Notes() {
                                   Archived: !note.Archived,
                                   Deleted: false,
                                   Pinned: false,
+                                  Hovered: false,
                                 }
                               : note
                           );
@@ -373,6 +386,7 @@ function Notes() {
                                   Deleted: !note.Deleted,
                                   Archived: false,
                                   Pinned: false,
+                                  Hovered: false,
                                 }
                               : note
                           );

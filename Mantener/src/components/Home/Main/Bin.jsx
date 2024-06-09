@@ -16,7 +16,8 @@ function Bin() {
   const Notes = useSelector((state) => state.notes.value);
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
-
+  const isgridded = useSelector((state) => state.gridded.value);
+  
   useEffect(() => {
     const NoteString = localStorage.getItem("Notes");
 
@@ -41,7 +42,9 @@ function Bin() {
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-[2rem] w-[100%] justify-start items-center">
-        <div className="flex flex-wrap grid-cols-5 h-fit mx-2 my-2 gap-2 ">
+        <div className={`${
+            isgridded ? "grid justify-center" : "flex flex-wrap grid-cols-5"
+          } h-fit mx-2 my-2 gap-2 `}>
           {loaded &&
             Notes.map(
               (item) =>
@@ -50,7 +53,7 @@ function Bin() {
                     key={item.Id}
                     onMouseEnter={() => dispatch(Hover(item.Id))}
                     onMouseLeave={() => dispatch(Hover(item.Id))}
-                    className={`block border-[1px]  place-self-auto border-white w-[13rem] h-fit rounded row-end-auto row-start-auto overflow-hidden ${
+                    className={`block border-[1px]  place-self-auto border-white ${isgridded ? "w-[30rem]" : "w-[13rem]"} h-fit rounded row-end-auto row-start-auto overflow-hidden ${
                       item.Hovered ? "border-opacity-50" : "border-opacity-30"
                     }`}
                   >
@@ -77,6 +80,7 @@ function Bin() {
                                     Deleted: !note.Deleted,
                                     Archived: false,
                                     Pinned: false,
+                                    Hovered: false,
                                   }
                                 : note
                             );

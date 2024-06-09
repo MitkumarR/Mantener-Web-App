@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Update } from "../notes/array";
 
 const initialState = {
   value: 0,
@@ -17,10 +18,12 @@ export const sidebarSlice = createSlice({
     bin: (state) => {
       state.value = 2;
     },
-
+    update: (state, action) =>{
+      state.value = action.payload;
+    }
   },
 });
 
-export const { note, archive, bin } = sidebarSlice.actions;
+export const { note, archive, bin, update } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

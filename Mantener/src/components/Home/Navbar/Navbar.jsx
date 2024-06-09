@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { Link } from "react-router-dom";
 
 import { change } from "../../../redux/clicked/clickedSlice";
 import { refresh } from "../../../redux/refresher/refresherSlice";
-import { grid } from "../../../redux/gridded/griddedSlice";
+import { grid, update } from "../../../redux/gridded/griddedSlice";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
@@ -18,6 +18,26 @@ function Navbar() {
   const isgridded = useSelector((state) => state.gridded.value);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const selected_grid = localStorage.getItem("isgridded");
+    if (selected_grid) {
+      try {
+        const parsedGrid = JSON.parse(selected_grid);
+        dispatch(update(parsedGrid));
+      } catch (error) {
+        console.error("Failed to parse localStorage item 'opt':", error);
+      }
+    }
+  }, [dispatch]);
+
+  const saveToLocal = (params) => {
+    try {
+      localStorage.setItem("isgridded", JSON.stringify(params));
+    } catch (error) {
+      console.error("Failed to save to localStorage:", error);
+    }
+  };
 
   const delay = (d) => {
     return new Promise((resolve, reject) => {
@@ -116,7 +136,10 @@ function Navbar() {
           </li>
           <li>
             <button
-              onClick={() => dispatch(grid())}
+              onClick={() => {dispatch(grid());
+                const newGrid = !isgridded;
+                saveToLocal(newGrid);
+              }}
               className="GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40"
             >
               {isgridded ? (

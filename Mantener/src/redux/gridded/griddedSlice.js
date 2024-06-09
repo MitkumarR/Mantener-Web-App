@@ -11,9 +11,12 @@ export const griddedSlice = createSlice({
     grid: (state) => {
       state.value = !state.value;
     },
+    update: (state, action) => {
+      state.value = action.payload;
+    },
   },
 });
 
-export const { grid } = griddedSlice.actions;
+export const { grid, update } = griddedSlice.actions;
 
 export default griddedSlice.reducer;
