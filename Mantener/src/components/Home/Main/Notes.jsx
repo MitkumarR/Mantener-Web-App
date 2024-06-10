@@ -11,7 +11,7 @@ import {
   Archive,
   Pin,
 } from "../../../redux/notes/array";
-import { usetemp } from "../../../redux/signer/tempUser";
+import { usetemp,  savetempUser } from "../../../redux/signer/tempUser";
 
 import {
   PiPushPinThin,
@@ -28,6 +28,7 @@ import {
   PiPaintBrushThin,
 } from "react-icons/pi";
 import Archived from "./Archived";
+import { Await } from "react-router-dom";
 
 function Notes() {
   const issigned = useSelector((state) => state.signed.value);
@@ -55,21 +56,57 @@ function Notes() {
     // setN(formattedNote);
   };
 
-  useEffect(() => {
-    const NoteString = localStorage.getItem("Notes");
-    if (NoteString) {
-      try {
-        const updatedNotes = JSON.parse(NoteString);
-        if (Array.isArray(updatedNotes)) {
-          dispatch(Update(updatedNotes));
-        } else {
-          console.error("Loaded data is not an array", updatedNotes);
+  const getUsers = async ()=>{
+    let req  =fetch("http://localhost:3000/");
+    let NoteString = await req.json();
+      if (NoteString) {
+        try {
+          const updatedNotes = JSON.parse(NoteString);
+          if (Array.isArray(updatedNotes)) {
+            dispatch(Update(updatedNotes));
+          } else {
+            console.error("Loaded data is not an array", updatedNotes);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage", error);
         }
+      }
+      setLoaded(true);
+  }
+  useEffect(() => {
+
+    
+    const selected_tempUser = localStorage.getItem("tempUser");
+    if (selected_tempUser) {
+      try {
+        const parsedtempUser = JSON.parse(selected_tempUser);
+        dispatch(savetempUser(parsedtempUser));
+        console.log(tempUser);
       } catch (error) {
-        console.error("Error parsing JSON from localStorage", error);
+        console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
-    setLoaded(true);
+
+    if (tempUser) {
+      const NoteString = localStorage.getItem("Notes");
+      if (NoteString) {
+        try {
+          const updatedNotes = JSON.parse(NoteString);
+          if (Array.isArray(updatedNotes)) {
+            dispatch(Update(updatedNotes));
+          } else {
+            console.error("Loaded data is not an array", updatedNotes);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage", error);
+        }
+      }
+      setLoaded(true);
+    }
+    else
+    {
+      getUsers();
+    }
   }, [dispatch]);
 
   const saveToLocal = (params) => {
@@ -90,7 +127,10 @@ function Notes() {
       ...Notes,
       { Id, Title, Note, Deleted, Pinned, Archived, Hovered },
     ];
-    saveToLocal(updatedNotes);
+
+    if (tempUser) {
+      saveToLocal(updatedNotes);
+    }
     setT("");
     setFormattedNote("");
     setN("");

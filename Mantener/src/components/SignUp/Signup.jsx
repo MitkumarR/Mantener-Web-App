@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 function Signup() {
-  
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [signupError, setsignupError] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -20,39 +27,69 @@ function Signup() {
     });
   };
 
-  const [isEyeOpen, setisEyeOpen] = useState(false)
+  const [isEyeOpen, setisEyeOpen] = useState(false);
 
-  const handleisEyeOpen = () =>{
+  const handleisEyeOpen = () => {
     setisEyeOpen(!isEyeOpen);
   };
 
   const onSubmit = async (data) => {
-
     if (data.Password != data.ConfirmPassword) {
       setError("confirmPass", {
         message: "Please Check your password and then Confirm",
       });
-    }
-    else
-    {
+    } else {
+      // data.preventDefault();
 
-      let r = await fetch("http://localhost:3000/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
 
-      let res = await r.text();
-      console.log(data, res);
+        setUsername(data.Username);
+        setPassword(data.Password);
+        const body = JSON.stringify({ username, password });
+
+        const res = await axios.post(
+          "http://localhost:3000/signup",
+          body,
+          config
+        );
+
+        setsignupError(false);
+
+        if(!signupError)
+          {
+            setError("successfullySignup", {
+              message: "Sign Up Successfully  ",
+            });
+          }
+        console.log(res.data);
+      } catch (err) {
+        setsignupError(true);
+        if(signupError)
+          {
+            setError("serverError", {
+              message: "Server Error ! Please Try Again",
+            });
+          }
+        console.log(errors.serverError.message);
+        console.error(err.response.data);
+      }
+      // let r = await fetch("http://localhost:3000/", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+
+      // let res = await r.text();
+      // console.log(data, res);
       await delay(2);
     }
-      
-      if (data.Username[0] === "0") {
-        setError("pattern", { message: "first character must be letter" });
-      }
-      
   };
   return (
     <div>
@@ -126,8 +163,19 @@ function Signup() {
               className={`bg-black h-[2rem] w-[10rem] focus:outline-none `}
             />
 
-            {isEyeOpen ? <PiEye opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/> : <PiEyeClosed opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/>}
-            
+            {isEyeOpen ? (
+              <PiEye
+                opacity={0.7}
+                onClick={handleisEyeOpen}
+                className="w-[1rem] h-[1rem] mr-2"
+              />
+            ) : (
+              <PiEyeClosed
+                opacity={0.7}
+                onClick={handleisEyeOpen}
+                className="w-[1rem] h-[1rem] mr-2"
+              />
+            )}
           </div>
 
           <div
@@ -144,7 +192,6 @@ function Signup() {
                 required: true,
               })}
               type="password"
-              
               placeholder="Confirm Password"
               className={`bg-black h-[2rem] focus:outline-none ${
                 errors.confirmPass && "border-red-900"
@@ -156,6 +203,11 @@ function Signup() {
             {errors.Password && <span>{errors.Password.message}</span>}
             {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
             {errors.Username && <span>{errors.Username.message}</span>}
+            {errors.serverError && <span>{errors.serverError.message}</span>}    
+          </div>
+
+          <div className="text-blue-500 mx-auto text-sm ">
+            {errors.successfullySignup && <span>{errors.successfullySignup.message}</span>}    
           </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">

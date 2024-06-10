@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { usetemp } from "../../../redux/signer/tempUser";
+import { usetemp, savetempUser } from "../../../redux/signer/tempUser";
 
 import { Link } from "react-router-dom";
 function First() {
-
+  const tempUser = useSelector((state) => state.tempUser.value);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const selected_tempUser = localStorage.getItem("tempUser");
+    if (selected_tempUser) {
+      try {
+        const parsedtempUser = JSON.parse(selected_tempUser);
+        dispatch(savetempUser(parsedtempUser));
+      } catch (error) {
+        console.error("Failed to parse localStorage item 'opt':", error);
+      }
+    }
+  }, [dispatch]);
+
+  const saveToLocal = (params) => {
+    try {
+      localStorage.setItem("tempUser", JSON.stringify(params));
+    } catch (error) {
+      console.error("Failed to save to localStorage:", error);
+    }
+  };
   return (
     <div className="my-auto fixed top-20 left-20 right-0 mt-10 justify-center items-center w-[90%] h-[100%]">
       <div className="opacity-70">
@@ -21,10 +41,20 @@ function First() {
       </span>
 
       <span className="text-xs text-center my-2  flex justify-center items-center ">
-        <Link to="/notes" className="flex justify-center items-center w-[20%] h-10">
-          <button onClick={()=>{dispatch(usetemp());
-            localStorage.clear();
-          }} className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 ">
+        <Link
+          to="/notes"
+          className="flex justify-center items-center w-[20%] h-10"
+        >
+          <button
+            onClick={() => {
+              dispatch(usetemp());
+              
+              localStorage.clear();
+              const newtempUser = true;
+              saveToLocal(newtempUser);
+            }}
+            className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 "
+          >
             Use Temporary Notes
           </button>
         </Link>

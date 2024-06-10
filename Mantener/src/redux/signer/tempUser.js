@@ -10,11 +10,13 @@ export const tempUserSlice = createSlice({
   reducers: {
     usetemp: (state) => {
       state.value = true;
-      console.log(state.value);
     },
+    savetempUser: (state, action) =>{
+      state.value = action.payload;
+    },  
   },
 });
 
-export const { usetemp } = tempUserSlice.actions;
+export const { usetemp, savetempUser } = tempUserSlice.actions;
 
 export default tempUserSlice.reducer;
