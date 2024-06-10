@@ -22,7 +22,9 @@ function First() {
 
       <span className="text-xs text-center my-2  flex justify-center items-center ">
         <Link to="/notes" className="flex justify-center items-center w-[20%] h-10">
-          <button onClick={()=>dispatch(usetemp())} className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 ">
+          <button onClick={()=>{dispatch(usetemp());
+            localStorage.clear();
+          }} className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:bg-black hover:text-blue-500 border-[1px] border-blue-500 ">
             Use Temporary Notes
           </button>
         </Link>

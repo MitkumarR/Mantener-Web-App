@@ -20,28 +20,28 @@ function App() {
   const issigned = useSelector((state) => state.signed.value);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (tempUser) {
-      const handleBeforeUnload = (event) => {
-        const confirmationMessage =
-          "Are you sure you want to leave? All your data will be erased.";
-        event.returnValue = confirmationMessage;
-        return confirmationMessage;
-      };
+  // useEffect(() => {
+  //   if (tempUser) {
+  //     const handleBeforeUnload = (event) => {
+  //       const confirmationMessage =
+  //         "Are you sure you want to leave? All your data will be erased.";
+  //       event.returnValue = confirmationMessage;
+  //       return confirmationMessage;
+  //     };
 
-      const handleUnload = () => {
-        localStorage.clear();
-      };
+  //     const handleUnload = () => {
+  //       localStorage.clear();
+  //     };
 
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      window.addEventListener("unload", handleUnload);
+  //     window.addEventListener("beforeunload", handleBeforeUnload);
+  //     window.addEventListener("unload", handleUnload);
 
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        window.removeEventListener("unload", handleUnload);
-      };
-    }
-  }, [tempUser]);
+  //     return () => {
+  //       window.removeEventListener("beforeunload", handleBeforeUnload);
+  //       window.removeEventListener("unload", handleUnload);
+  //     };
+  //   }
+  // }, [tempUser]);
 
   const router = createBrowserRouter([
     {
