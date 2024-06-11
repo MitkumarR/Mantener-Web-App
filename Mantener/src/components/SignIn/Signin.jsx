@@ -3,9 +3,13 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { CiUser, CiLock} from "react-icons/ci";
+import { CiUser, CiLock } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 function Signin() {
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -21,15 +25,15 @@ function Signin() {
     });
   };
 
-  const [isEyeOpen, setisEyeOpen] = useState(false)
+  const [isEyeOpen, setisEyeOpen] = useState(false);
 
-  const handleisEyeOpen = () =>{
+  const handleisEyeOpen = () => {
     setisEyeOpen(!isEyeOpen);
   };
 
   const onSubmit = async (data) => {
-
-      let r = await fetch("http://localhost:3000/", {
+    try {
+      let r = await fetch("http://localhost:3000/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,14 +41,19 @@ function Signin() {
         body: JSON.stringify(data),
       });
 
-      let res = await r.text();
+      let res = await r.json();
       console.log(data, res);
-      await delay(2);
 
-      if (data.Username[0] === "0") {
-        setError("pattern", { message: "first character must be letter" });
+      if (r.status === 400) {
+        setError("Username", { message: res.msg });
+      } else if (r.status === 200) {
+        console.log("User notes: ", res.user.notes);
+        // Handle user notes here
+        // e.g., save to local storage, state, or context
       }
-      
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
   return (
     <div>
@@ -78,7 +87,7 @@ function Signin() {
         <span className="text-2xl">Mantener</span>
       </div>
       <div className="flex justify-center border  w-96  h-96 mx-auto  rounded-xl ">
-        <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <form action="/signin" method="post" onSubmit={handleSubmit(onSubmit)}>
           <div
             className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
               errors.Username && "border-red-900"
@@ -118,14 +127,40 @@ function Signin() {
               className={`bg-black h-[2rem] w-[10rem] focus:outline-none `}
             />
 
-            {isEyeOpen ? <PiEye opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/> : <PiEyeClosed opacity={0.7} onClick={handleisEyeOpen} className="w-[1rem] h-[1rem] mr-2"/>}
-            
+            {isEyeOpen ? (
+              <PiEye
+                opacity={0.7}
+                onClick={handleisEyeOpen}
+                className="w-[1rem] h-[1rem] mr-2"
+              />
+            ) : (
+              <PiEyeClosed
+                opacity={0.7}
+                onClick={handleisEyeOpen}
+                className="w-[1rem] h-[1rem] mr-2"
+              />
+            )}
           </div>
 
           <div className="text-red-500 mx-auto text-sm ">
-            {errors.Password && <span>{errors.Password.message}<br/></span>}
-            {errors.confirmPass && <span>{errors.confirmPass.message}<br/></span>}
-            {errors.Username && <span>{errors.Username.message}<br/></span>}
+            {errors.Password && (
+              <span>
+                {errors.Password.message}
+                <br />
+              </span>
+            )}
+            {errors.confirmPass && (
+              <span>
+                {errors.confirmPass.message}
+                <br />
+              </span>
+            )}
+            {errors.Username && (
+              <span>
+                {errors.Username.message}
+                <br />
+              </span>
+            )}
           </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">
@@ -139,8 +174,16 @@ function Signin() {
           >
             Sign In
           </button>
-          <hr/>
-          <span className="text-xs flex justify-center items-center my-5">Don't have an Account ? &nbsp; <Link to="/signup" className="text-blue-500  hover:border-b-[1px] hover:border-blue-500">Sign Up</Link></span>
+          <hr />
+          <span className="text-xs flex justify-center items-center my-5">
+            Don't have an Account ? &nbsp;{" "}
+            <Link
+              to="/signup"
+              className="text-blue-500  hover:border-b-[1px] hover:border-blue-500"
+            >
+              Sign Up
+            </Link>
+          </span>
         </form>
       </div>
     </div>

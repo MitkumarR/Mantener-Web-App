@@ -87,27 +87,23 @@ function Notes() {
       }
     }
 
-    if (tempUser) {
-      const NoteString = localStorage.getItem("Notes");
-      if (NoteString) {
-        try {
-          const updatedNotes = JSON.parse(NoteString);
-          if (Array.isArray(updatedNotes)) {
-            dispatch(Update(updatedNotes));
-          } else {
-            console.error("Loaded data is not an array", updatedNotes);
-          }
-        } catch (error) {
-          console.error("Error parsing JSON from localStorage", error);
+    const NoteString = localStorage.getItem("Notes");
+    if (NoteString) {
+      try {
+        const updatedNotes = JSON.parse(NoteString);
+        if (Array.isArray(updatedNotes)) {
+          dispatch(Update(updatedNotes));
+        } else {
+          console.error("Loaded data is not an array", updatedNotes);
         }
+      } catch (error) {
+        console.error("Error parsing JSON from localStorage", error);
       }
-      setLoaded(true);
     }
-    else
-    {
-      getUsers();
-    }
-  }, [dispatch]);
+    setLoaded(true);
+    // getUsers();
+    
+  }, [dispatch, tempUser]);
 
   const saveToLocal = (params) => {
     localStorage.setItem("Notes", JSON.stringify(params));

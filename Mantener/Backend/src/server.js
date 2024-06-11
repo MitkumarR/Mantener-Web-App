@@ -2,6 +2,7 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
 const bodyparser = require("body-parser");
+const path  = require("path");
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -78,6 +79,9 @@ app.post('/signin', async (req, res) => {
               notes: user.notes
           }
       });
+
+      res.json({ msg: 'User signed in successfully' });
+
   } catch (err) {
       res.status(500).json({ msg: 'Server error' });
   }
@@ -102,7 +106,7 @@ app.post('/signup', async (req, res) => {
     });
 
     await newUser.save();
-    res.json({ msg: 'User registered successfully' });
+    res.json({ msg: 'User signed up successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });

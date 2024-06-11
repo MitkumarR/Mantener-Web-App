@@ -27,11 +27,20 @@ function Navbar() {
   useEffect(() => {
     const selected_grid = localStorage.getItem("isgridded");
     const selected_theme = localStorage.getItem("theme");
+    const selected_tempUser_ = localStorage.getItem("tempUser");
 
     if (selected_grid) {
       try {
         const parsedGrid = JSON.parse(selected_grid);
         dispatch(update(parsedGrid));
+      } catch (error) {
+        console.error("Failed to parse localStorage item 'opt':", error);
+      }
+    }
+    if (selected_tempUser_) {
+      try {
+        const parsedtempUser = JSON.parse(selected_tempUser_);
+        dispatch(update(parsedtempUser));
       } catch (error) {
         console.error("Failed to parse localStorage item 'opt':", error);
       }

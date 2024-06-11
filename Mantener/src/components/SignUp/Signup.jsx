@@ -5,6 +5,8 @@ import axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
+
+
 function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,12 +36,14 @@ function Signup() {
   };
 
   const onSubmit = async (data) => {
+    
     if (data.Password != data.ConfirmPassword) {
       setError("confirmPass", {
         message: "Please Check your password and then Confirm",
       });
     } else {
-      // data.preventDefault();
+
+      event.preventDefault(); 
 
       try {
         const config = {
@@ -59,23 +63,9 @@ function Signup() {
         );
 
         setsignupError(false);
-
-        if(!signupError)
-          {
-            setError("successfullySignup", {
-              message: "Sign Up Successfully  ",
-            });
-          }
         console.log(res.data);
       } catch (err) {
         setsignupError(true);
-        if(signupError)
-          {
-            setError("serverError", {
-              message: "Server Error ! Please Try Again",
-            });
-          }
-        console.log(errors.serverError.message);
         console.error(err.response.data);
       }
       // let r = await fetch("http://localhost:3000/", {
@@ -203,11 +193,11 @@ function Signup() {
             {errors.Password && <span>{errors.Password.message}</span>}
             {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
             {errors.Username && <span>{errors.Username.message}</span>}
-            {errors.serverError && <span>{errors.serverError.message}</span>}    
+            {/* {errors.serverError && <span>{errors.serverError.message}</span>}     */}
           </div>
 
           <div className="text-blue-500 mx-auto text-sm ">
-            {errors.successfullySignup && <span>{errors.successfullySignup.message}</span>}    
+            {/* {errors.successfullySignup && <span>{errors.successfullySignup.message}</span>}     */}
           </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">
