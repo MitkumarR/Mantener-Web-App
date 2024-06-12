@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const cors = require("cors");
+const { collection } = require("./config");
 dotenv.config();
 
 const url = "mongodb://localhost:27017/";
@@ -19,6 +20,8 @@ const app = express();
 const port = 3000;
 
 app.use(bodyparser.json());
+app.use(express.json());
+app.use(express.urlencoded({extended : false}));
 app.use(cors());
 
 // client.connect();
@@ -88,28 +91,32 @@ app.post('/signin', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
 
+
+  // const { username, password } = req.body;
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ msg: 'User already exists' });
-    }
-
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const newUser = new User({
-      username,
+      username : req.body.username,   
       password: hashedPassword,
       notes: [],
     });
 
-    await newUser.save();
-    res.json({ msg: 'User signed up successfully' });
+    const existingUser = await User.findOne({username: req.body.username });
+    if (existingUser) {
+      return res.status(400).json('User already exists');
+    }
+
+
+    const userData = await User.insertMany(newUser);
+
+    // await newUser.save();
+    return res.json('User signed up successfully');
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: 'Server error' });
+    return res.status(500).json('Server error');
   }
 });
 

@@ -6,13 +6,9 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
-
 function Signup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  const [signupError, setsignupError] = useState(false);
+  // const [signupError, setsignupError] = useState(false);
+  const [response, setresponse] = useState("");
 
   const {
     register,
@@ -36,14 +32,13 @@ function Signup() {
   };
 
   const onSubmit = async (data) => {
-    
+    await delay(2);
     if (data.Password != data.ConfirmPassword) {
       setError("confirmPass", {
         message: "Please Check your password and then Confirm",
       });
     } else {
-
-      event.preventDefault(); 
+      // event.preventDefault();
 
       try {
         const config = {
@@ -52,9 +47,12 @@ function Signup() {
           },
         };
 
-        setUsername(data.Username);
-        setPassword(data.Password);
-        const body = JSON.stringify({ username, password });
+        // setUsername(data.Username);
+        // setPassword(data.Password);
+        const body = JSON.stringify({
+          username: data.Username,
+          password: data.Password,
+        });
 
         const res = await axios.post(
           "http://localhost:3000/signup",
@@ -62,10 +60,10 @@ function Signup() {
           config
         );
 
-        setsignupError(false);
+        setresponse(res.data);
         console.log(res.data);
       } catch (err) {
-        setsignupError(true);
+        setresponse(err.response.data);
         console.error(err.response.data);
       }
       // let r = await fetch("http://localhost:3000/", {
@@ -78,7 +76,6 @@ function Signup() {
 
       // let res = await r.text();
       // console.log(data, res);
-      await delay(2);
     }
   };
   return (
@@ -113,7 +110,7 @@ function Signup() {
         <span className="text-2xl">Mantener</span>
       </div>
       <div className="flex justify-center border  w-96  h-96 mx-auto  rounded-xl ">
-        <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
           <div
             className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
               errors.Username && "border-red-900"
@@ -189,15 +186,14 @@ function Signup() {
             />
           </div>
 
-          <div className="text-red-500 mx-auto text-sm ">
+          <div className="text-red-500 mx-auto text-sm  text-center">
             {errors.Password && <span>{errors.Password.message}</span>}
             {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
             {errors.Username && <span>{errors.Username.message}</span>}
-            {/* {errors.serverError && <span>{errors.serverError.message}</span>}     */}
           </div>
 
-          <div className="text-blue-500 mx-auto text-sm ">
-            {/* {errors.successfullySignup && <span>{errors.successfullySignup.message}</span>}     */}
+          <div className="text-blue-500 mx-auto text-sm  text-center">
+            {response && <span>{response}</span>}
           </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">
@@ -205,6 +201,7 @@ function Signup() {
             </div>
           )}
           <button
+            {...register("SignUp")}
             disabled={isSubmitting}
             type="Submit"
             className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
