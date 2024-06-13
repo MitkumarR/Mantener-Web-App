@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { Delete, Update, Hover, Archive } from "../../../redux/notes/array";
-import { usetemp } from "../../../redux/signer/tempUser";
 
 import { PiTrashLight, PiTrayArrowUpLight } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";

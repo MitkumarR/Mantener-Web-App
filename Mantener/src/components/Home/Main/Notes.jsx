@@ -11,7 +11,6 @@ import {
   Archive,
   Pin,
 } from "../../../redux/notes/array";
-import { usetemp,  savetempUser } from "../../../redux/signer/tempUser";
 
 import {
   PiPushPinThin,
@@ -34,7 +33,6 @@ function Notes() {
   const issigned = useSelector((state) => state.signed.value);
   const wantAdd = useSelector((state) => state.added.value);
   const whattoAdd = useSelector((state) => state.adding.value);
-  const tempUser = useSelector((state) => state.tempUser.value);
   const Notes = useSelector((state) => state.notes.value);
 
   const isgridded = useSelector((state) => state.gridded.value);
@@ -56,37 +54,25 @@ function Notes() {
     // setN(formattedNote);
   };
 
-  const getUsers = async ()=>{
-    let req  =fetch("http://localhost:3000/");
+  const getUsers = async () => {
+    let req = fetch("http://localhost:3000/");
     let NoteString = await req.json();
-      if (NoteString) {
-        try {
-          const updatedNotes = JSON.parse(NoteString);
-          if (Array.isArray(updatedNotes)) {
-            dispatch(Update(updatedNotes));
-          } else {
-            console.error("Loaded data is not an array", updatedNotes);
-          }
-        } catch (error) {
-          console.error("Error parsing JSON from localStorage", error);
-        }
-      }
-      setLoaded(true);
-  }
-  useEffect(() => {
-
-    
-    const selected_tempUser = localStorage.getItem("tempUser");
-    if (selected_tempUser) {
+    if (NoteString) {
       try {
-        const parsedtempUser = JSON.parse(selected_tempUser);
-        dispatch(savetempUser(parsedtempUser));
-        console.log(tempUser);
+        const updatedNotes = JSON.parse(NoteString);
+        if (Array.isArray(updatedNotes)) {
+          dispatch(Update(updatedNotes));
+        } else {
+          console.error("Loaded data is not an array", updatedNotes);
+        }
       } catch (error) {
-        console.error("Failed to parse localStorage item 'opt':", error);
+        console.error("Error parsing JSON from localStorage", error);
       }
     }
+    setLoaded(true);
+  };
 
+  useEffect(() => {
     const NoteString = localStorage.getItem("Notes");
     if (NoteString) {
       try {
@@ -102,8 +88,7 @@ function Notes() {
     }
     setLoaded(true);
     // getUsers();
-    
-  }, [dispatch, tempUser]);
+  }, [dispatch]);
 
   const saveToLocal = (params) => {
     localStorage.setItem("Notes", JSON.stringify(params));
@@ -124,9 +109,8 @@ function Notes() {
       { Id, Title, Note, Deleted, Pinned, Archived, Hovered },
     ];
 
-    if (tempUser) {
-      saveToLocal(updatedNotes);
-    }
+    saveToLocal(updatedNotes);
+
     setT("");
     setFormattedNote("");
     setN("");

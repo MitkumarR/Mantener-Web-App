@@ -16,6 +16,7 @@ function Signin() {
   const [response, setresponse] = useState("");
 
   const issigned = useSelector((state) => state.signed.value);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const {
@@ -58,6 +59,7 @@ function Signin() {
       dispatch(signin());
       console.log(data, res);
 
+      navigate('/notes');
       if (r.status === 400) {
         await delay(2);
         setresponse(res);

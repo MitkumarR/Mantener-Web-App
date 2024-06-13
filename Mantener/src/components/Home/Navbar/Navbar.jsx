@@ -18,7 +18,7 @@ function Navbar() {
   const isRefreshed = useSelector((state) => state.refreshed.value);
   const isgridded = useSelector((state) => state.gridded.value);
   const theme = useSelector((state) => state.theme.value);
-  const tempUser = useSelector((state) => state.tempUser.value);
+  const issignedIn = useSelector((state) => state.signed.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
@@ -27,7 +27,6 @@ function Navbar() {
   useEffect(() => {
     const selected_grid = localStorage.getItem("isgridded");
     const selected_theme = localStorage.getItem("theme");
-    const selected_tempUser_ = localStorage.getItem("tempUser");
 
     if (selected_grid) {
       try {
@@ -37,14 +36,7 @@ function Navbar() {
         console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
-    if (selected_tempUser_) {
-      try {
-        const parsedtempUser = JSON.parse(selected_tempUser_);
-        dispatch(update(parsedtempUser));
-      } catch (error) {
-        console.error("Failed to parse localStorage item 'opt':", error);
-      }
-    }
+
     if (selected_theme) {
       try {
         const parsedTheme = JSON.parse(selected_theme);
@@ -90,7 +82,9 @@ function Navbar() {
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-10 bg-black`}>
-      <div className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] `}>
+      <div
+        className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] `}
+      >
         <div className={`Logo mx-[2%] flex justify-center w-[10%]`}>
           <svg
             width={`2rem`}
@@ -156,7 +150,9 @@ function Navbar() {
           </button>
         </div>
 
-        <ul className={`flex justify-center gap-5 items-center mx-[2%] w-[30%]`}>
+        <ul
+          className={`flex justify-center gap-5 items-center mx-[2%] w-[30%]`}
+        >
           <li>
             <button
               onClick={onRefresh}
@@ -196,9 +192,13 @@ function Navbar() {
         </ul>
 
         {isClickedOnSetting && (
-          <div className={`absolute right-[9rem] top-[4.5rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}>
+          <div
+            className={`absolute right-[9rem] top-[4.5rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
+          >
             <ul className={`p-1`}>
-              <li className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}>
+              <li
+                className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+              >
                 <button
                   onClick={() => {
                     theme === "black" ? dispatch(white()) : dispatch(black());
@@ -207,23 +207,37 @@ function Navbar() {
                   {theme === "black" ? "Light Mode" : "Dark Mode"}
                 </button>
               </li>
-              <li className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}>
+              <li
+                className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+              >
                 <button>Help</button>
               </li>
             </ul>
           </div>
         )}
-        {
-          tempUser && <div className="text-[10px] text-blue-500 w-[8rem]">Using for short time</div>
-        }
-        <Link to="/signin" className={`w-[10%] mx-[2%]`}>
-          <button className={`rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500`}>
-            Sign In
-          </button>
-        </Link>
-        {/* <div className="User mx-10 rounded-full border-white border-[1px] w-7 h-7 flex justify-center items-center">
-          <CiUser className="size-5" />
-        </div> */}
+
+        {issignedIn ? (
+          <div className="flex justify-center w-full gap-3 items-center">
+            <div className="User p-1 rounded-full border-white border-[1px] size-8 flex justify-center items-center">
+              <CiUser className="size-5 " />
+            </div>
+            <div className="flex justify-center items-center">Hi ! username</div>
+          </div>
+        ) : (
+          <div className="flex justify-center  items-center w-full">
+            <div className="text-[10px] text-blue-500 w-[8rem]">
+              Using for short time
+            </div>
+
+            <Link to="/signin" className={`w-[10%] mx-[2%]`}>
+              <button
+                className={`rounded-full text-sm border-white border-[1px] w-[5rem] text-center h-8 flex justify-center items-center hover:text-black hover:bg-blue-500 hover:border-blue-500 hover:duration-500`}
+              >
+                Sign In
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

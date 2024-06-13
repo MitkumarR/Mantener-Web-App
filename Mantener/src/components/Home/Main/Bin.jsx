@@ -8,7 +8,6 @@ import {
   Archive,
   Remove,
 } from "../../../redux/notes/array";
-import { usetemp } from "../../../redux/signer/tempUser";
 
 import { PiXCircleLight, PiDownloadSimpleLight } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";

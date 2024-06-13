@@ -7,7 +7,7 @@ import signedReducer from './signer/signerSlice'
 import addedReducer from './adder/adderSlice'
 import addingReducer from './adding/addingSlice'
 import arrayReducer from './notes/array'
-import tempUserReducer from './signer/tempUser'
+
 import sidebarReducer from './clicked/sidebarSlice'
 import themeReducer from './theme/themeSlice'
 
@@ -21,7 +21,6 @@ export const store = configureStore({
     added: addedReducer,
     adding: addingReducer,
     notes: arrayReducer,
-    tempUser: tempUserReducer,
     sidebar: sidebarReducer,
     theme: themeReducer,
 

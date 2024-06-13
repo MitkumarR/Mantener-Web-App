@@ -13,15 +13,13 @@ import Notes from "./components/Home/Main/Notes";
 import Bin from "./components/Home/Main/Bin";
 import First from "./components/Home/Main/First";
 
-import { usetemp } from "./redux/signer/tempUser";
-
 function App() {
-  const tempUser = useSelector((state) => state.tempUser.value);
+
   const issigned = useSelector((state) => state.signed.value);
   const dispatch = useDispatch();
 
   // useEffect(() => {
-  //   if (tempUser) {
+  //   
   //     const handleBeforeUnload = (event) => {
   //       const confirmationMessage =
   //         "Are you sure you want to leave? All your data will be erased.";
@@ -40,9 +38,8 @@ function App() {
   //       window.removeEventListener("beforeunload", handleBeforeUnload);
   //       window.removeEventListener("unload", handleUnload);
   //     };
-  //   }
-  // }, [tempUser]);
-
+  //   
+  // }, []);
   const router = createBrowserRouter([
     {
       path: "/",
