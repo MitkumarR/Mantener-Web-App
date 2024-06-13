@@ -14,6 +14,6 @@ export const signedSlice = createSlice({
   },
 });
 
-export const { sign } = signedSlice.actions;
+export const { signin } = signedSlice.actions;
 
 export default signedSlice.reducer;

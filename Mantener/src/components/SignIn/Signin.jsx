@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { signin } from "../../redux/signer/signerSlice";
+import { useNavigate } from 'react-router-dom';
 
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
-function Signin() {
 
+function Signin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [response, setresponse] = useState("");
+
+  const issigned = useSelector((state) => state.signed.value);
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -32,25 +40,33 @@ function Signin() {
   };
 
   const onSubmit = async (data) => {
+    await delay(2);
     try {
       let r = await fetch("http://localhost:3000/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          username: data.Username,
+          password: data.Password,
+        }),
       });
 
       let res = await r.json();
+
+      dispatch(signin());
       console.log(data, res);
 
       if (r.status === 400) {
-        setError("Username", { message: res.msg });
-      } else if (r.status === 200) {
-        console.log("User notes: ", res.user.notes);
-        // Handle user notes here
-        // e.g., save to local storage, state, or context
+        await delay(2);
+        setresponse(res);
       }
+      //  else if (r.status === 200) {
+      //   console.log("User notes: ", res.user.notes);
+      //   // Handle user notes here
+      //   // e.g., save to local storage, state, or context
+      // }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -137,41 +153,25 @@ function Signin() {
               <PiEyeClosed
                 opacity={0.7}
                 onClick={handleisEyeOpen}
-                className="w-[1rem] h-[1rem] mr-2"
+                className="w-[1rem] h-[1rem] mr-2 "
               />
             )}
           </div>
 
-          <div className="text-red-500 mx-auto text-sm ">
-            {errors.Password && (
-              <span>
-                {errors.Password.message}
-                <br />
-              </span>
-            )}
-            {errors.confirmPass && (
-              <span>
-                {errors.confirmPass.message}
-                <br />
-              </span>
-            )}
-            {errors.Username && (
-              <span>
-                {errors.Username.message}
-                <br />
-              </span>
-            )}
-          </div>
           {isSubmitting && (
             <div className="flex justify-center items-center w-full ">
               <AiOutlineLoading3Quarters className="animate-spin" />
             </div>
           )}
+
+          <div className="text-blue-500 mx-auto text-sm  text-center">
+            {response && <span>{response}</span>}
+          </div>
           <button
             disabled={isSubmitting}
             type="Submit"
             className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
-          >
+            >
             Sign In
           </button>
           <hr />

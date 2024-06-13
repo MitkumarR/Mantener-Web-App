@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 app.use(cors());
 
+app.set('view engine', 'jsx');
+
 // client.connect();
 
 mongoose.connect('mongodb://localhost:27017/Mantener', {
@@ -63,30 +65,29 @@ app.get("/", async (req, res) => {
 
 // Authentication Route
 app.post('/signin', async (req, res) => {
-  const { username, password } = req.body;
 
   try {
-      const user = await User.findOne({ username });
-      if (!user) return res.status(400).json({ msg: 'User not found' });
+      const user = await User.findOne({ username : req.body.username });
+      if (!user) return res.status(400).json('User not found');
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+      const isMatch = await bcrypt.compare(req.body.password , user.password);
+      if (!isMatch) return res.status(400).json('Invalid Password');
 
-      const token = jwt.sign({ id: user._id }, 'yourJWTSecret', { expiresIn: '1h' });
+      // const token = jwt.sign({ id: user._id }, 'yourJWTSecret', { expiresIn: '1h' });
 
       res.json({
-          token,
+          // token,
           user: {
               id: user._id,
               username: user.username,
               notes: user.notes
-          }
+          }, 
       });
 
-      res.json({ msg: 'User signed in successfully' });
-
+      // res.render('/Mantener/src/components/Home/Main/Notes.jsx');
+      
   } catch (err) {
-      res.status(500).json({ msg: 'Server error' });
+      res.status(500).json('Server error');
   }
 });
 

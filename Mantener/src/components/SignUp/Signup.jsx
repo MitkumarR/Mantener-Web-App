@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { CiUser, CiLock, CiCircleCheck } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 function Signup() {
-  // const [signupError, setsignupError] = useState(false);
+  const [isSignuped, setisSignuped] = useState(false);
   const [response, setresponse] = useState("");
 
   const {
@@ -62,9 +63,14 @@ function Signup() {
 
         setresponse(res.data);
         console.log(res.data);
-      } catch (err) {
-        setresponse(err.response.data);
-        console.error(err.response.data);
+        
+        await delay(2);
+        setisSignuped(true);
+        } catch (err) {
+          setresponse(err.response.data);
+          console.error(err.response.data);
+          await delay(2);
+          setisSignuped(false);
       }
       // let r = await fetch("http://localhost:3000/", {
       //   method: "POST",
@@ -110,105 +116,120 @@ function Signup() {
         <span className="text-2xl">Mantener</span>
       </div>
       <div className="flex justify-center border  w-96  h-96 mx-auto  rounded-xl ">
-        <form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
-          <div
-            className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.Username && "border-red-900"
-            }`}
-          >
-            <CiUser opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
-            <input
-              {...register("Username", {
-                required: true,
-                minLength: {
-                  value: 4,
-                  message: "Minimum Length of Username should be 4",
-                },
-              })}
-              type="text"
-              placeholder="Username"
-              className={`bg-black h-[2rem] focus:outline-none `}
-            />
-          </div>
-
-          <div
-            className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.Password && "border-red-900"
-            }`}
-          >
-            <CiLock opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
-            <input
-              {...register("Password", {
-                required: true,
-                minLength: {
-                  value: 6,
-                  message: "Password should have atleast 6 letters",
-                },
-              })}
-              type={`${isEyeOpen ? "text" : "password"}`}
-              placeholder="Password"
-              className={`bg-black h-[2rem] w-[10rem] focus:outline-none `}
-            />
-
-            {isEyeOpen ? (
-              <PiEye
-                opacity={0.7}
-                onClick={handleisEyeOpen}
-                className="w-[1rem] h-[1rem] mr-2"
-              />
-            ) : (
-              <PiEyeClosed
-                opacity={0.7}
-                onClick={handleisEyeOpen}
-                className="w-[1rem] h-[1rem] mr-2"
-              />
-            )}
-          </div>
-
-          <div
-            className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
-              errors.ConfirmPassword && "border-red-900"
-            }`}
-          >
-            <CiCircleCheck
-              opacity={0.7}
-              className="w-[1.5rem] h-[1.5rem] mr-2"
-            />
-            <input
-              {...register("ConfirmPassword", {
-                required: true,
-              })}
-              type="password"
-              placeholder="Confirm Password"
-              className={`bg-black h-[2rem] focus:outline-none ${
-                errors.confirmPass && "border-red-900"
-              }`}
-            />
-          </div>
-
-          <div className="text-red-500 mx-auto text-sm  text-center">
-            {errors.Password && <span>{errors.Password.message}</span>}
-            {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
-            {errors.Username && <span>{errors.Username.message}</span>}
-          </div>
-
-          <div className="text-blue-500 mx-auto text-sm  text-center">
-            {response && <span>{response}</span>}
-          </div>
-          {isSubmitting && (
-            <div className="flex justify-center items-center w-full ">
-              <AiOutlineLoading3Quarters className="animate-spin" />
+        {isSignuped ? (
+          <div>
+            <div className="my-5 text-xs">
+              Thank you for Sign Up with Mantener
             </div>
-          )}
-          <button
-            {...register("SignUp")}
-            disabled={isSubmitting}
-            type="Submit"
-            className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
-          >
-            Sign Up
-          </button>
-        </form>
+            <div className="flex justify-center items-center w-full">
+              Go for &nbsp;
+              <Link to="/signin">
+                <span className="text-blue-500">Sign In</span>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
+            <div
+              className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
+                errors.Username && "border-red-900"
+              }`}
+            >
+              <CiUser opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
+              <input
+                {...register("Username", {
+                  required: true,
+                  minLength: {
+                    value: 4,
+                    message: "Minimum Length of Username should be 4",
+                  },
+                })}
+                type="text"
+                placeholder="Username"
+                className={`bg-black h-[2rem] focus:outline-none `}
+              />
+            </div>
+
+            <div
+              className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
+                errors.Password && "border-red-900"
+              }`}
+            >
+              <CiLock opacity={0.7} className="w-[1.5rem] h-[1.5rem] mr-2" />
+              <input
+                {...register("Password", {
+                  required: true,
+                  minLength: {
+                    value: 6,
+                    message: "Password should have atleast 6 letters",
+                  },
+                })}
+                type={`${isEyeOpen ? "text" : "password"}`}
+                placeholder="Password"
+                className={`bg-black h-[2rem] w-[10rem] focus:outline-none `}
+              />
+
+              {isEyeOpen ? (
+                <PiEye
+                  opacity={0.7}
+                  onClick={handleisEyeOpen}
+                  className="w-[1rem] h-[1rem] mr-2"
+                />
+              ) : (
+                <PiEyeClosed
+                  opacity={0.7}
+                  onClick={handleisEyeOpen}
+                  className="w-[1rem] h-[1rem] mr-2"
+                />
+              )}
+            </div>
+
+            <div
+              className={`flex justify-center border-white border-[1px] rounded-full my-5 w-[15rem] h-[3rem] items-center mx-auto ${
+                errors.ConfirmPassword && "border-red-900"
+              }`}
+            >
+              <CiCircleCheck
+                opacity={0.7}
+                className="w-[1.5rem] h-[1.5rem] mr-2"
+              />
+              <input
+                {...register("ConfirmPassword", {
+                  required: true,
+                })}
+                type="password"
+                placeholder="Confirm Password"
+                className={`bg-black h-[2rem] focus:outline-none ${
+                  errors.confirmPass && "border-red-900"
+                }`}
+              />
+            </div>
+
+            <div className="text-red-500 mx-auto text-sm  text-center">
+              {errors.Password && <span>{errors.Password.message}</span>}
+              {errors.confirmPass && <span>{errors.confirmPass.message}</span>}
+              {errors.Username && <span>{errors.Username.message}</span>}
+            </div>
+
+            <div className="text-blue-500 mx-auto text-sm  text-center">
+              {response && <span>{response}</span>}
+            </div>
+            {isSubmitting && (
+              <div className="flex justify-center items-center w-full ">
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              </div>
+            )}
+
+            <button
+              {...register("SignUp")}
+              disabled={isSubmitting}
+              type="Submit"
+              className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
+            >
+              Sign Up
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

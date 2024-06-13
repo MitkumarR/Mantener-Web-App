@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { sign } from "../../../redux/signer/signerSlice";
+import { signin } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
 import {
