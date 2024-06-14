@@ -20,6 +20,7 @@ function Navbar() {
   const isgridded = useSelector((state) => state.gridded.value);
   const issignedIn = useSelector((state) => state.signed.value);
   const userName = useSelector((state) => state.username.value);
+  const userId  = useSelector((state)=> state.userid.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
@@ -29,22 +30,25 @@ function Navbar() {
 
     const fetchData = async () => {
       try {
-        const userId = localStorage.getItem('userId'); // Assuming you have the userId stored in localStorage
-        if (!userId) {
-          console.error('User ID not found in localStorage');
-          return;
-        }
+        // const userId = localStorage.getItem('userId');
+        // if (!userId) {
+        //   console.error('User ID not found in localStorage');
+        //   return;
+        // }
+
 
         const response = await axios.get(`http://localhost:3000/notes`);
-        const { notes, username: updatedUsername } = response.data;
+        const data = response.data;
 
         // if (notes) {
         //   dispatch(Update(notes));
         // }
 
-        if (updatedUsername) {
-          dispatch(username(updatedUsername));
+        if (data.username) {
+          dispatch(username(data.username));
+          console.log(userName);
         }
+        
       } catch (error) {
         console.error('Error fetching notes from backend', error);
       }
@@ -104,7 +108,7 @@ function Navbar() {
   return (
     <div className={`fixed top-0 left-0 right-0 z-10 bg-black`}>
       <div
-        className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center text-white w-[100%] `}
+        className={`flex border-b-[1px] border-white p-1  z-10 border-opacity-50 justify-center items-center text-white w-[100%] `}
       >
         <div className={`Logo mx-[2%] flex justify-center w-[10%]`}>
           <svg
@@ -172,7 +176,7 @@ function Navbar() {
         </div>
 
         <ul
-          className={`flex justify-center gap-5 items-center mx-[2%] w-[30%]`}
+          className={`flex justify-end gap-5 items-center mx-[2%] w-[30%]`}
         >
           <li>
             <button
@@ -237,11 +241,11 @@ function Navbar() {
         
 
         {issignedIn ? (
-          <div className="flex justify-center w-full gap-3 items-center">
-            <div className="User p-1 rounded-full border-white border-[1px] size-8 flex justify-center items-center">
-              <CiUser className="size-5 " />
+          <div className="flex justify-center w-[20%] gap-3 items-center">
+            <div className="User p-1 rounded-full border-white border-[1px] size-7 flex justify-center items-center">
+              <CiUser className="size-4 " />
             </div>
-            <div className="flex justify-center items-center">Hi !&nbsp; {userName}</div>
+            <div className="flex justify-center items-center text-sm">Hi !&nbsp; {userName}</div>
           </div>
         ) : (
           <div className="flex justify-center  items-center w-full">

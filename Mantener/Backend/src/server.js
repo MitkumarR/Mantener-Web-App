@@ -69,9 +69,22 @@ app.get('/notes', async (req, res) => {
   }
 });
 
-app.post('/notes', async (req, res)=>{
+app.post('/notes', async (req, res) => {
   
-}); 
+  try {
+    const user = await User.findOne({ id: req.body.id });
+    if (user) {
+      user.notes.push(req.body.note);
+      await user.save();
+      res.status(201).json({ message: 'Note saved successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving note', error });
+  }
+});
+
 // Authentication Route
 app.post('/signin', async (req, res) => {
 
@@ -123,9 +136,6 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-app.post('/notes', async (req, res)=>{
-
-});
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}/`);

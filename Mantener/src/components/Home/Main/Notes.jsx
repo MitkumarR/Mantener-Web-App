@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
 import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
@@ -38,7 +39,7 @@ function Notes() {
   const Notes = useSelector((state) => state.notes.value);
 
   const isgridded = useSelector((state) => state.gridded.value);
-  const userId = useSelector((state)=> state.userid.value);
+  const userId = useSelector((state) => state.userid.value);
 
   const dispatch = useDispatch();
   // const issigned = true;
@@ -49,6 +50,13 @@ function Notes() {
 
   const [formattedNote, setFormattedNote] = useState("");
 
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setN(value);
@@ -58,32 +66,12 @@ function Notes() {
     // setN(formattedNote);
   };
 
-  const getUsers = async () => {
-    
-    let req = fetch("http://localhost:3000/");
-    let NoteString = await req.json();
-    if (NoteString) {
-      try {
-        const updatedNotes = JSON.parse(NoteString);
-        if (Array.isArray(updatedNotes)) {
-          dispatch(Update(updatedNotes));
-        } else {
-          console.error("Loaded data is not an array", updatedNotes);
-        }
-      } catch (error) {
-        console.error("Error parsing JSON from localStorage", error);
-      }
-    }
-    setLoaded(true);
-  };
-
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
-        const userId = localStorage.getItem('userId'); // Assuming you have the userId stored in localStorage
+        const userId = localStorage.getItem("userId"); // Assuming you have the userId stored in localStorage
         if (!userId) {
-          console.error('User ID not found in localStorage');
+          console.error("User ID not found in localStorage");
           return;
         }
 
@@ -98,7 +86,7 @@ function Notes() {
         //   dispatch(username(updatedUsername));
         // }
       } catch (error) {
-        console.error('Error fetching notes from backend', error);
+        console.error("Error fetching notes from backend", error);
       }
     };
 
@@ -127,7 +115,7 @@ function Notes() {
     localStorage.setItem("Notes", JSON.stringify(params));
   };
 
-  const save_data = () => {
+  const onSave = async (note) => {
     const Id = uuidv4();
     const Title = T;
     const Note = formattedNote;
@@ -136,17 +124,48 @@ function Notes() {
     const Pinned = false;
     const Hovered = false;
 
-    dispatch(Insert({ Id, Note, Title, Deleted, Pinned, Archived, Hovered }));
-    const updatedNotes = [
-      ...Notes,
-      { Id, Title, Note, Deleted, Pinned, Archived, Hovered },
-    ];
+    const userId = localStorage.getItem("userId"); 
 
-    saveToLocal(updatedNotes);
+    const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
 
-    setT("");
-    setFormattedNote("");
-    setN("");
+    try {
+      const response = await axios.post('http://localhost:3000/notes', {
+        id: userId,
+        note: noteData,
+      });
+
+      // const config = {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // };
+
+      // const body = JSON.stringify({
+      //   id: userId,
+      //   note: noteData,
+      // });
+
+      // const response = await axios.post(
+      //   `http://localhost:3000/notes`,
+      //   body,
+      //   config
+      // );
+
+      if (response.status === 201) {
+        dispatch(Insert(noteData));
+        const updatedNotes = [...Notes, noteData];
+
+        saveToLocal(updatedNotes);
+
+        setT("");
+        setFormattedNote("");
+        setN("");
+      } else {
+        console.error("Error saving note", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error saving note to backend", error);
+    }
   };
 
   return (
@@ -203,36 +222,41 @@ function Notes() {
         <div className="h-auto w-[100%] flex justify-center items-center">
           {whattoAdd === 1 ? (
             <div className="border-[1px] w-[50%] h-auto p-2 rounded border-white bg-black">
-              <input
-                type="text"
-                placeholder="Title"
-                value={T}
-                onChange={(e) => {
-                  setT(e.target.value);
-                }}
-                className=" bg-black w-[90%] focus:outline-none"
-              />
-              <br />
+              <form action="" method="post" onSubmit={handleSubmit(onSave)}>
+                <input
+                  {...register("Title")}
+                  type="text"
+                  placeholder="Title"
+                  value={T}
+                  onChange={(e) => {
+                    setT(e.target.value);
+                  }}
+                  className=" bg-black w-[90%] focus:outline-none"
+                />
+                <br />
 
-              <textarea
-                type="text"
-                placeholder="Take notes..."
-                value={N}
-                onChange={handleInputChange}
-                // onChange={(e) => {
-                //   setN(e.target.value);
-                // }}
-                className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
-              />
+                <textarea
+                  {...register("takenNotes")}
+                  type="text"
+                  placeholder="Take notes..."
+                  value={N}
+                  onChange={handleInputChange}
+                  // onChange={(e) => {
+                  //   setN(e.target.value);
+                  // }}
+                  className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
+                />
 
-              <div className="w-full flex justify-end">
-                <button
-                  onClick={save_data}
-                  className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[10%] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
-                >
-                  Save
-                </button>
-              </div>
+                <div className="w-full flex justify-end">
+                  <button
+                    {...register("Save")}
+                    type="Submit"
+                    className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[10%] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
             </div>
           ) : whattoAdd === 2 ? (
             <div></div>
