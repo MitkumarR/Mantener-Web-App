@@ -56,13 +56,22 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-app.get("/", async (req, res) => {
-  const db = client.db(dbName);
-  const collection = db.collection("Users");
-  const findResult = await collection.find({}).toArray();
-  res.json(findResult);
+app.get('/notes', async (req, res) => {
+  try {
+    const user = await User.findOne({ id: req.params.id });
+    if (user) {
+      res.json({ notes: user.notes, username: user.username });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving notes', error });
+  }
 });
 
+app.post('/notes', async (req, res)=>{
+  
+}); 
 // Authentication Route
 app.post('/signin', async (req, res) => {
 
@@ -75,14 +84,7 @@ app.post('/signin', async (req, res) => {
 
       // const token = jwt.sign({ id: user._id }, 'yourJWTSecret', { expiresIn: '1h' });
 
-      res.json({
-          // token,
-          user: {
-              id: user._id,
-              username: user.username,
-              notes: user.notes
-          }, 
-      });
+      res.json(user._id);
 
       // res.render('/Mantener/src/components/Home/Main/Notes.jsx');
       
@@ -119,6 +121,10 @@ app.post('/signup', async (req, res) => {
     console.error(err);
     return res.status(500).json('Server error');
   }
+});
+
+app.post('/notes', async (req, res)=>{
+
 });
 
 app.listen(port, () => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 
 import { Link } from "react-router-dom";
@@ -6,27 +7,53 @@ import { Link } from "react-router-dom";
 import { change } from "../../../redux/clicked/clickedSlice";
 import { refresh } from "../../../redux/refresher/refresherSlice";
 import { grid, update } from "../../../redux/gridded/griddedSlice";
-import { white, black, updatetheme } from "../../../redux/theme/themeSlice";
-
+import { username } from "../../../redux/user/usernameSlice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { GoSearch } from "react-icons/go";
 import { CiGrid2H, CiGrid41, CiRedo, CiSettings, CiUser } from "react-icons/ci";
+import { update_signin } from "../../../redux/signer/signerSlice";
 
 function Navbar() {
   const isClicked = useSelector((state) => state.clicked.value);
   const isRefreshed = useSelector((state) => state.refreshed.value);
   const isgridded = useSelector((state) => state.gridded.value);
-  const theme = useSelector((state) => state.theme.value);
   const issignedIn = useSelector((state) => state.signed.value);
+  const userName = useSelector((state) => state.username.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const userId = localStorage.getItem('userId'); // Assuming you have the userId stored in localStorage
+        if (!userId) {
+          console.error('User ID not found in localStorage');
+          return;
+        }
+
+        const response = await axios.get(`http://localhost:3000/notes`);
+        const { notes, username: updatedUsername } = response.data;
+
+        // if (notes) {
+        //   dispatch(Update(notes));
+        // }
+
+        if (updatedUsername) {
+          dispatch(username(updatedUsername));
+        }
+      } catch (error) {
+        console.error('Error fetching notes from backend', error);
+      }
+    };
+
+    fetchData();
+
     const selected_grid = localStorage.getItem("isgridded");
-    const selected_theme = localStorage.getItem("theme");
+    const selected_signin = localStorage.getItem("issigned");
 
     if (selected_grid) {
       try {
@@ -36,15 +63,15 @@ function Navbar() {
         console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
-
-    if (selected_theme) {
+    if (selected_signin) {
       try {
-        const parsedTheme = JSON.parse(selected_theme);
-        dispatch(update(parsedTheme));
+        const parsedSignin = JSON.parse(selected_signin);
+        dispatch(update_signin(parsedSignin));
       } catch (error) {
-        console.error("Failed to parse localStorage item 'theme':", error);
+        console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
+
   }, [dispatch]);
 
   const saveToLocal = (params) => {
@@ -54,13 +81,7 @@ function Navbar() {
       console.error("Failed to save to localStorage:", error);
     }
   };
-  const saveToLocalTheme = (params) => {
-    try {
-      localStorage.setItem("theme", JSON.stringify(params));
-    } catch (error) {
-      console.error("Failed to save to localStorage:", error);
-    }
-  };
+  
 
   const delay = (d) => {
     return new Promise((resolve, reject) => {
@@ -83,7 +104,7 @@ function Navbar() {
   return (
     <div className={`fixed top-0 left-0 right-0 z-10 bg-black`}>
       <div
-        className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center my-2 text-white w-[100%] `}
+        className={`flex border-b-[1px] border-white p-3  z-10 border-opacity-50 justify-center items-center text-white w-[100%] `}
       >
         <div className={`Logo mx-[2%] flex justify-center w-[10%]`}>
           <svg
@@ -181,30 +202,25 @@ function Navbar() {
               )}
             </button>
           </li>
-          <li>
+          <li className="relative">
             <button
               onClick={handleisClickedOnSetting}
               className={`Setting flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40`}
             >
               <CiSettings className="size-5" />
             </button>
-          </li>
-        </ul>
 
-        {isClickedOnSetting && (
+            {isClickedOnSetting && (
           <div
-            className={`absolute right-[9rem] top-[4.5rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
+            className={`absolute top-[2rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
           >
             <ul className={`p-1`}>
               <li
                 className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
               >
                 <button
-                  onClick={() => {
-                    theme === "black" ? dispatch(white()) : dispatch(black());
-                  }}
                 >
-                  {theme === "black" ? "Light Mode" : "Dark Mode"}
+                  Light Mode
                 </button>
               </li>
               <li
@@ -215,13 +231,17 @@ function Navbar() {
             </ul>
           </div>
         )}
+          </li>
+        </ul>
+
+        
 
         {issignedIn ? (
           <div className="flex justify-center w-full gap-3 items-center">
             <div className="User p-1 rounded-full border-white border-[1px] size-8 flex justify-center items-center">
               <CiUser className="size-5 " />
             </div>
-            <div className="flex justify-center items-center">Hi ! username</div>
+            <div className="flex justify-center items-center">Hi !&nbsp; {userName}</div>
           </div>
         ) : (
           <div className="flex justify-center  items-center w-full">

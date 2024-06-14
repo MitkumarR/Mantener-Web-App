@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { signin } from "../../redux/signer/signerSlice";
+import { signin, update_signin } from "../../redux/signer/signerSlice";
+import { username } from "../../redux/user/usernameSlice";
+import { userid } from "../../redux/user/useridSlice";
 import { useNavigate } from 'react-router-dom';
 
 import { useForm } from "react-hook-form";
@@ -11,11 +13,12 @@ import { CiUser, CiLock } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 function Signin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [response, setresponse] = useState("");
 
+  const [response, setresponse] = useState("");
   const issigned = useSelector((state) => state.signed.value);
+  const userName = useSelector((state) => state.username.value);
+  const userId  = useSelector((state)=> state.userid.value);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -40,6 +43,16 @@ function Signin() {
     setisEyeOpen(!isEyeOpen);
   };
 
+  const saveToLocal = (item, params) =>{
+
+    try{
+      localStorage.setItem(item, JSON.stringify(params));
+    }catch(error){
+      console.log("Failed to save to localStorage:", error);
+    }
+
+  };
+
   const onSubmit = async (data) => {
     await delay(2);
     try {
@@ -57,7 +70,16 @@ function Signin() {
       let res = await r.json();
 
       dispatch(signin());
+      const newSignin = true;
+      dispatch(update_signin(newSignin));
+      saveToLocal("issigned", newSignin);
+
       console.log(data, res);
+
+      dispatch(userid(res));
+      const newUserid = res;
+      dispatch(userid(newUserid));
+      saveToLocal("userId", newUserid);
 
       navigate('/notes');
       if (r.status === 400) {

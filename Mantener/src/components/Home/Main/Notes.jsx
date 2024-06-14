@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+
 import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
@@ -36,6 +38,8 @@ function Notes() {
   const Notes = useSelector((state) => state.notes.value);
 
   const isgridded = useSelector((state) => state.gridded.value);
+  const userId = useSelector((state)=> state.userid.value);
+
   const dispatch = useDispatch();
   // const issigned = true;
 
@@ -55,6 +59,7 @@ function Notes() {
   };
 
   const getUsers = async () => {
+    
     let req = fetch("http://localhost:3000/");
     let NoteString = await req.json();
     if (NoteString) {
@@ -73,20 +78,48 @@ function Notes() {
   };
 
   useEffect(() => {
-    const NoteString = localStorage.getItem("Notes");
-    if (NoteString) {
+    
+    const fetchData = async () => {
       try {
-        const updatedNotes = JSON.parse(NoteString);
-        if (Array.isArray(updatedNotes)) {
-          dispatch(Update(updatedNotes));
-        } else {
-          console.error("Loaded data is not an array", updatedNotes);
+        const userId = localStorage.getItem('userId'); // Assuming you have the userId stored in localStorage
+        if (!userId) {
+          console.error('User ID not found in localStorage');
+          return;
         }
+
+        const response = await axios.get(`http://localhost:3000/notes`);
+        const { notes, username: updatedUsername } = response.data;
+
+        if (notes) {
+          dispatch(Update(notes));
+        }
+
+        // if (updatedUsername) {
+        //   dispatch(username(updatedUsername));
+        // }
       } catch (error) {
-        console.error("Error parsing JSON from localStorage", error);
+        console.error('Error fetching notes from backend', error);
       }
-    }
-    setLoaded(true);
+    };
+
+    fetchData();
+
+    // const NoteString = localStorage.getItem("Notes");
+    // if (NoteString) {
+    //   try {
+    //     const updatedNotes = JSON.parse(NoteString);
+    //     if (Array.isArray(updatedNotes)) {
+    //       dispatch(Update(updatedNotes));
+    //     } else {
+    //       console.error("Loaded data is not an array", updatedNotes);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error parsing JSON from localStorage", error);
+    //   }
+    // }
+    // setLoaded(true);
+
+    fetchData();
     // getUsers();
   }, [dispatch]);
 
