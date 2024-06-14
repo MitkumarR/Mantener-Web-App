@@ -76,10 +76,10 @@ function Signin() {
 
       console.log(data, res);
 
-      dispatch(userid(res));
-      const newUserid = res;
-      dispatch(userid(newUserid));
-      saveToLocal("userId", newUserid);
+      dispatch(username(res));
+      const newUsername = res;
+      dispatch(userid(newUsername));
+      saveToLocal("userName", newUsername);
 
       navigate('/notes');
       if (r.status === 400) {

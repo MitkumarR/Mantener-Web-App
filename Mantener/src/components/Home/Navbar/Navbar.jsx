@@ -30,11 +30,11 @@ function Navbar() {
 
     const fetchData = async () => {
       try {
-        // const userId = localStorage.getItem('userId');
-        // if (!userId) {
-        //   console.error('User ID not found in localStorage');
-        //   return;
-        // }
+        const user_name = localStorage.getItem('userName');
+        if (!user_name) {
+          console.error('User ID not found in localStorage');
+          return;
+        }
 
 
         const response = await axios.get(`http://localhost:3000/notes`);
@@ -46,7 +46,6 @@ function Navbar() {
 
         if (data.username) {
           dispatch(username(data.username));
-          console.log(userName);
         }
         
       } catch (error) {
@@ -54,7 +53,7 @@ function Navbar() {
       }
     };
 
-    fetchData();
+    // fetchData();
 
     const selected_grid = localStorage.getItem("isgridded");
     const selected_signin = localStorage.getItem("issigned");
@@ -76,7 +75,7 @@ function Navbar() {
       }
     }
 
-  }, [dispatch]);
+  }, [dispatch, userName]);
 
   const saveToLocal = (params) => {
     try {

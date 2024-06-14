@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
+import { username } from "../../../redux/user/usernameSlice";
 import {
   Insert,
   Delete,
@@ -40,7 +41,7 @@ function Notes() {
 
   const isgridded = useSelector((state) => state.gridded.value);
   const userId = useSelector((state) => state.userid.value);
-
+  const userName = useSelector((state) => state.username.value);
   const dispatch = useDispatch();
   // const issigned = true;
 
@@ -69,24 +70,28 @@ function Notes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = localStorage.getItem("userId"); // Assuming you have the userId stored in localStorage
-        if (!userId) {
+        const user_name = localStorage.getItem("userName"); 
+        if (!user_name) {
           console.error("User ID not found in localStorage");
           return;
         }
-
-        const response = await axios.get(`http://localhost:3000/notes`);
-        const { notes, username: updatedUsername } = response.data;
+        const response = await axios.get(`http://localhost:3000/notes/${user_name}`);
+        const { notes, username } = response.data;
 
         if (notes) {
           dispatch(Update(notes));
         }
+    
 
-        // if (updatedUsername) {
-        //   dispatch(username(updatedUsername));
-        // }
+        if (username) {
+
+          const updated_userName = username;
+          dispatch(username(updated_userName));
+          console.log(updated_userName);
+        }
+    
       } catch (error) {
-        console.error("Error fetching notes from backend", error);
+        console.error("Error fetching notes from  backend", error);
       }
     };
 
@@ -124,13 +129,13 @@ function Notes() {
     const Pinned = false;
     const Hovered = false;
 
-    const userId = localStorage.getItem("userId"); 
+    const user_name = localStorage.getItem("userName"); 
 
     const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
 
     try {
       const response = await axios.post('http://localhost:3000/notes', {
-        id: userId,
+        username : userName,
         note: noteData,
       });
 

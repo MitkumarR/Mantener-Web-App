@@ -56,10 +56,11 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-app.get('/notes', async (req, res) => {
+app.get('/notes/:username', async (req, res) => {
   try {
-    const user = await User.findOne({ id: req.params.id });
+    const user = await User.findOne({ id: req.params.username });
     if (user) {
+      console.log(user.username);
       res.json({ notes: user.notes, username: user.username });
     } else {
       res.status(404).json({ message: 'User not found' });
@@ -72,7 +73,7 @@ app.get('/notes', async (req, res) => {
 app.post('/notes', async (req, res) => {
   
   try {
-    const user = await User.findOne({ id: req.body.id });
+    const user = await User.findOne({ id: req.body.username });
     if (user) {
       user.notes.push(req.body.note);
       await user.save();
@@ -97,7 +98,7 @@ app.post('/signin', async (req, res) => {
 
       // const token = jwt.sign({ id: user._id }, 'yourJWTSecret', { expiresIn: '1h' });
 
-      res.json(user._id);
+      res.json(user.username);
 
       // res.render('/Mantener/src/components/Home/Main/Notes.jsx');
       
