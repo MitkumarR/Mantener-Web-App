@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
-import { username } from "../../../redux/user/usernameSlice";
+import { updateUsername } from "../../../redux/user/usernameSlice";
 import {
   Insert,
   Delete,
@@ -70,28 +70,31 @@ function Notes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user_name = localStorage.getItem("userName"); 
+        let user_name = localStorage.getItem('userName'); 
+        // let user_name = userName; 
         if (!user_name) {
-          console.error("User ID not found in localStorage");
+          console.error("User Name not found in localStorage");
           return;
         }
+
+        user_name = user_name.replace(/^"|"$/g, '');
+
         const response = await axios.get(`http://localhost:3000/notes/${user_name}`);
-        const { notes, username } = response.data;
+        const notes  = response.data;
 
         if (notes) {
           dispatch(Update(notes));
         }
     
 
-        if (username) {
-
-          const updated_userName = username;
-          dispatch(username(updated_userName));
-          console.log(updated_userName);
-        }
+        // if (username) {
+        //   const updated_userName = username;
+        //   dispatch(updateUsername(updated_userName));
+        //   console.log(updated_userName);
+        // }
     
       } catch (error) {
-        console.error("Error fetching notes from  backend", error);
+        console.error("Error fetching data from  backend", error);
       }
     };
 
@@ -129,38 +132,22 @@ function Notes() {
     const Pinned = false;
     const Hovered = false;
 
-    const user_name = localStorage.getItem("userName"); 
+    let user_name = localStorage.getItem("userName"); 
+    user_name = user_name.replace(/^"|"$/g, '');
 
     const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
 
     try {
+
       const response = await axios.post('http://localhost:3000/notes', {
-        username : userName,
+        username : user_name,
         note: noteData,
       });
 
-      // const config = {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // };
-
-      // const body = JSON.stringify({
-      //   id: userId,
-      //   note: noteData,
-      // });
-
-      // const response = await axios.post(
-      //   `http://localhost:3000/notes`,
-      //   body,
-      //   config
-      // );
-
       if (response.status === 201) {
-        dispatch(Insert(noteData));
-        const updatedNotes = [...Notes, noteData];
-
-        saveToLocal(updatedNotes);
+        // dispatch(Insert(noteData));
+        // const updatedNotes = [...Notes, noteData];
+        // saveToLocal(updatedNotes);
 
         setT("");
         setFormattedNote("");
@@ -173,13 +160,35 @@ function Notes() {
     }
   };
 
+  const onChange = async (changedData, itemId) =>{
+
+    let user_name = localStorage.getItem("userName"); 
+    user_name = user_name.replace(/^"|"$/g, '');
+
+    try {
+
+      const response = await axios.post('http://localhost:3000/notes/change', {
+        username : user_name,
+        itemid : itemId,
+        changes: changedData,
+      });
+
+      if (response.status === 201) {
+        console.log(response.data.message);
+      } else {
+        console.error("Error saving note", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error saving note to backend", error);
+    }
+  };
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-fit w-[100%] justify-start items-center">
         <div className="flex justfy-start p-2 items-center">
           <button
             onClick={() => dispatch(add())}
-            className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+            className="flex justify-center items-center border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
           >
             <PiPlusLight
               className={`${wantAdd ? "rotate-45" : ""} duration-300`}
@@ -193,7 +202,7 @@ function Notes() {
                     dispatch(note());
                     dispatch(add());
                   }}
-                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                  className="flex justify-center items-center border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
                 >
                   <PiNoteThin />
                 </button>
@@ -204,7 +213,7 @@ function Notes() {
                     dispatch(list());
                     dispatch(add());
                   }}
-                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                  className="flex justify-center items-center  border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
                 >
                   <PiListChecksThin />
                 </button>
@@ -215,7 +224,7 @@ function Notes() {
                     dispatch(draw());
                     dispatch(add());
                   }}
-                  className="flex justify-center items-center bg-black border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
+                  className="flex justify-center items-center border-[1px] border-blue-500 rounded-full duration-300 text-blue-500 w-[2rem] h-[2rem] hover:bg-blue-500 hover:text-black"
                 >
                   <PiPaintBrushThin />
                 </button>
@@ -309,7 +318,8 @@ function Notes() {
                               }
                             : note
                         );
-                        saveToLocal(newNotes);
+                        // saveToLocal(newNotes);
+                        onChange(newNotes, item.id);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
                         !item.Hovered ? "opacity-100" : "opacity-0"
@@ -342,7 +352,8 @@ function Notes() {
                                 }
                               : note
                           );
-                          saveToLocal(newNotes);
+                          // saveToLocal(newNotes);
+                          onChange(newNotes, item.id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -364,7 +375,8 @@ function Notes() {
                                 }
                               : note
                           );
-                          saveToLocal(newNotes);
+                          // saveToLocal(newNotes);
+                          onChange(newNotes, item.id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -417,7 +429,8 @@ function Notes() {
                               }
                             : note
                         );
-                        saveToLocal(newNotes);
+                        // saveToLocal(newNotes);
+                        onChange(newNotes, item.id);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
                         item.Hovered ? "opacity-100" : "opacity-0"
@@ -450,7 +463,8 @@ function Notes() {
                                 }
                               : note
                           );
-                          saveToLocal(newNotes);
+                          // saveToLocal(newNotes);
+                          onChange(newNotes, item.id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -472,7 +486,8 @@ function Notes() {
                                 }
                               : note
                           );
-                          saveToLocal(newNotes);
+                          // saveToLocal(newNotes);
+                          onChange(newNotes, item.id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -492,3 +507,21 @@ function Notes() {
 }
 
 export default Notes;
+
+
+      // const config = {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // };
+
+      // const body = JSON.stringify({
+      //   id: userId,
+      //   note: noteData,
+      // });
+
+      // const response = await axios.post(
+      //   `http://localhost:3000/notes`,
+      //   body,
+      //   config
+      // );

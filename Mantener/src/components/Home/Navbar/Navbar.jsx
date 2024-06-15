@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { change } from "../../../redux/clicked/clickedSlice";
 import { refresh } from "../../../redux/refresher/refresherSlice";
 import { grid, update } from "../../../redux/gridded/griddedSlice";
-import { username } from "../../../redux/user/usernameSlice";
+import { updateUsername } from "../../../redux/user/usernameSlice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { GoSearch } from "react-icons/go";
@@ -20,7 +20,7 @@ function Navbar() {
   const isgridded = useSelector((state) => state.gridded.value);
   const issignedIn = useSelector((state) => state.signed.value);
   const userName = useSelector((state) => state.username.value);
-  const userId  = useSelector((state)=> state.userid.value);
+  // const userId  = useSelector((state)=> state.userid.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
 
@@ -30,30 +30,31 @@ function Navbar() {
 
     const fetchData = async () => {
       try {
-        const user_name = localStorage.getItem('userName');
+        let user_name = localStorage.getItem('userName');
+        // let user_name = userName;
         if (!user_name) {
-          console.error('User ID not found in localStorage');
+          console.error('User Name not found in localStorage');
           return;
         }
 
-
-        const response = await axios.get(`http://localhost:3000/notes`);
-        const data = response.data;
+        user_name = user_name.replace(/^"|"$/g, '');
+        // const response = await axios.get(`http://localhost:3000/notes`);
+        // const data = response.data;
 
         // if (notes) {
         //   dispatch(Update(notes));
         // }
 
-        if (data.username) {
-          dispatch(username(data.username));
+        if (user_name) {
+          dispatch(updateUsername(user_name));
         }
         
       } catch (error) {
-        console.error('Error fetching notes from backend', error);
+        console.error('Error fetching data from backend', error);
       }
     };
 
-    // fetchData();
+    fetchData();
 
     const selected_grid = localStorage.getItem("isgridded");
     const selected_signin = localStorage.getItem("issigned");

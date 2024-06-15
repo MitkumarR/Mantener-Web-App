@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { signin, update_signin } from "../../redux/signer/signerSlice";
-import { username } from "../../redux/user/usernameSlice";
+import { updateUsername} from "../../redux/user/usernameSlice";
 import { userid } from "../../redux/user/useridSlice";
 import { useNavigate } from 'react-router-dom';
 
@@ -76,9 +76,9 @@ function Signin() {
 
       console.log(data, res);
 
-      dispatch(username(res));
+      dispatch(updateUsername(res));
       const newUsername = res;
-      dispatch(userid(newUsername));
+      dispatch(updateUsername(newUsername));
       saveToLocal("userName", newUsername);
 
       navigate('/notes');

@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 
 const cors = require("cors");
 const { collection } = require("./config");
+const { change } = require("../../src/redux/clicked/clickedSlice");
 dotenv.config();
 
 const url = "mongodb://localhost:27017/";
@@ -40,42 +41,55 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
+const noteSchema = new mongoose.Schema({
+  Id: { type: String, required: true },
+  Title: { type: String, required: true },
+  Note: { type: String, required: true },
+  Deleted: { type: Boolean, default: false },
+  Pinned: { type: Boolean, default: false },
+  Archived: { type: Boolean, default: false },
+  Hovered: { type: Boolean, default: false },
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  notes: [{
-      id: String,
-      title: String,
-      note: String,
-      deleted: Boolean,
-      pinned: Boolean,
-      archived: Boolean,
-      hovered: Boolean
-  }]
+  notes: [noteSchema]
 });
 
 const User = mongoose.model('User', userSchema);
+const Note = mongoose.model('Note', noteSchema);
 
 app.get('/notes/:username', async (req, res) => {
   try {
-    const user = await User.findOne({ id: req.params.username });
+    const user = await User.findOne({ username: req.params.username });
+    console.log(user.username);
     if (user) {
-      console.log(user.username);
-      res.json({ notes: user.notes, username: user.username });
+      res.json(user.notes);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Error retrieving notes', error });
+    res.status(500).json({ message: 'Error retrieving data', error });
   }
 });
 
 app.post('/notes', async (req, res) => {
   
+  const note = req.body.note; 
   try {
-    const user = await User.findOne({ id: req.body.username });
+    const user = await User.findOne({ username : req.body.username });
     if (user) {
-      user.notes.push(req.body.note);
+        user.notes.push({
+          Id: note.Id,
+          Title: note.Title,
+          Note: note.Note,
+          Deleted: false,
+          Pinned: false,
+          Archived: false,
+          Hovered: false
+        });
+
       await user.save();
       res.status(201).json({ message: 'Note saved successfully' });
     } else {
@@ -83,6 +97,37 @@ app.post('/notes', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Error saving note', error });
+  }
+});
+
+app.post('/notes/change', async (req, res) => {
+  
+  const changes = req.body.changes; 
+  const itemid = req.body.itemid; 
+  try {
+    const user = await User.findOne({ username : req.body.username });
+    if (user) {
+        
+
+      user.notes.map((note) =>
+        note.Id === itemid
+          ? {
+              ...note,
+              Pinned : changes.Pinned,
+              Deleted : changes.Deleted,
+              Archive : changes.Archive,
+            }
+          : note
+      );
+      // user.notes.Pinned = changes.Pinned;
+
+      await user.save();
+      res.status(201).json({ message: 'Changes saved successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving changes', error });
   }
 });
 
