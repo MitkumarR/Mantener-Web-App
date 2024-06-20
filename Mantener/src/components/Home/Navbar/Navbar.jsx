@@ -139,7 +139,7 @@ function Navbar() {
             </defs>
           </svg>
           <span className=" flex justify-normal text-center items-center">
-            Mantener
+            Mant
           </span>
         </div>
 
