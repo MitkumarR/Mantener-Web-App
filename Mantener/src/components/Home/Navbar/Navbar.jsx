@@ -145,7 +145,7 @@ function Navbar() {
 
         <div className={`flex justify-center items-center mx-[1%] w-[50%]`}>
           <div
-            className={`border-[1px] border-white rounded-full  w-[90%] h-[2rem] flex justify-start items-center ${
+            className={`relative border-[1px] border-white rounded-full  w-[90%] h-[2rem] flex justify-start items-center ${
               isClicked ? "hover:opacity-100" : "opacity-50"
             }`}
           >
@@ -160,7 +160,7 @@ function Navbar() {
             {isClicked && (
               <button
                 onClick={() => dispatch(change())}
-                className={`rounded-full hover:bg-zinc-800 w-[1.5rem] h-[1.5rem] flex justify-center items-center `}
+                className={`absolute right-0 rounded-full hover:bg-zinc-800 w-[1.5rem] h-[1.5rem] flex justify-center items-center `}
               >
                 <RxCross1 className="size-3" />
               </button>

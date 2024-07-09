@@ -41,7 +41,7 @@ function Sidebar() {
 
   return (
     <div className="w-[10%] fixed top-20 left-0 right-0">
-      <ul className="mx-10 border-r-white w-10 border-r-[1px] border-opacity-50 h-60">
+      <ul className="mx-10 border-r-white w-10 border-r-[1px] border-opacity-10 h-60">
         <li className="my-3">
           <Link to="/notes">
             <button
