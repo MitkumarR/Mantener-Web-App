@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { signin, update_signin } from "../../redux/signer/signerSlice";
-import { updateUsername} from "../../redux/user/usernameSlice";
+import { updateUsername } from "../../redux/user/usernameSlice";
 import { userid } from "../../redux/user/useridSlice";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -13,11 +13,10 @@ import { CiUser, CiLock } from "react-icons/ci";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 function Signin() {
-
   const [response, setresponse] = useState("");
   const issigned = useSelector((state) => state.signed.value);
   const userName = useSelector((state) => state.username.value);
-  const userId  = useSelector((state)=> state.userid.value);
+  const userId = useSelector((state) => state.userid.value);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,14 +42,12 @@ function Signin() {
     setisEyeOpen(!isEyeOpen);
   };
 
-  const saveToLocal = (item, params) =>{
-
-    try{
+  const saveToLocal = (item, params) => {
+    try {
       localStorage.setItem(item, JSON.stringify(params));
-    }catch(error){
+    } catch (error) {
       console.log("Failed to save to localStorage:", error);
     }
-
   };
 
   const onSubmit = async (data) => {
@@ -69,22 +66,31 @@ function Signin() {
 
       let res = await r.json();
 
-      dispatch(signin());
-      const newSignin = true;
-      dispatch(update_signin(newSignin));
-      saveToLocal("issigned", newSignin);
-
-      console.log(data, res);
-
-      dispatch(updateUsername(res));
-      const newUsername = res;
-      dispatch(updateUsername(newUsername));
-      saveToLocal("userName", newUsername);
-
-      navigate('/notes');
-      if (r.status === 400) {
+      if (r.status === 400) 
+      {
         await delay(2);
         setresponse(res);
+      } 
+      else if (r.status === 500) 
+      {
+        await delay(2);
+        setresponse(res);
+      } 
+      else 
+      {
+        dispatch(signin());
+        const newSignin = true;
+        dispatch(update_signin(newSignin));
+        saveToLocal("issigned", newSignin);
+
+        console.log(data, res);
+
+        dispatch(updateUsername(res));
+        const newUsername = res;
+        dispatch(updateUsername(newUsername));
+        saveToLocal("userName", newUsername);
+
+        navigate("/notes");
       }
       //  else if (r.status === 200) {
       //   console.log("User notes: ", res.user.notes);
@@ -195,7 +201,7 @@ function Signin() {
             disabled={isSubmitting}
             type="Submit"
             className="flex justify-center border-white border-[1px] rounded-full my-5 w-[8rem] h-[3rem] items-center mx-auto duration-500 hover:bg-white hover:text-black "
-            >
+          >
             Sign In
           </button>
           <hr />

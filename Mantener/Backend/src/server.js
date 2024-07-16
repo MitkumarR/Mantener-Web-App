@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 const cors = require("cors");
 const { collection } = require("./config");
-const { change } = require("../../src/redux/clicked/clickedSlice");
+// const { change } = require("../../src/redux/clicked/clickedSlice");
 dotenv.config();
 
 const url = "mongodb://localhost:27017/";
@@ -135,6 +135,7 @@ app.post('/notes/change', async (req, res) => {
 app.post('/signin', async (req, res) => {
 
   try {
+      
       const user = await User.findOne({ username : req.body.username });
       if (!user) return res.status(400).json('User not found');
 
@@ -142,9 +143,7 @@ app.post('/signin', async (req, res) => {
       if (!isMatch) return res.status(400).json('Invalid Password');
 
       // const token = jwt.sign({ id: user._id }, 'yourJWTSecret', { expiresIn: '1h' });
-
       res.json(user.username);
-
       // res.render('/Mantener/src/components/Home/Main/Notes.jsx');
       
   } catch (err) {

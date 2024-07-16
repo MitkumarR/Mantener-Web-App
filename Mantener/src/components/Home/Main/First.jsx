@@ -1,39 +1,44 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 function First() {
-  const dispatch = useDispatch();
 
+  const issigned = useSelector((state) => state.signed.value);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {}, [dispatch]);
 
   const saveToLocal = (params) => {};
-  return (
-    <div className="my-auto fixed top-20 left-20 right-0 mt-10 justify-center items-center w-[90%] h-[100%]">
+
+  return issigned ? navigate("/notes") :(
+        <div className="my-auto fixed top-20 left-20 right-0 mt-10 justify-center items-center w-[90%] h-[100%]">
       <div className="opacity-70">
-        <span className="text-xs text-center  font-light flex justify-center items-center">
+      <span className="text-xs text-center  font-light flex justify-center items-center">
           If you do not sign in, any notes you take will not be saved. Please
           <span className=" font-semibold"> &nbsp;Sign In &nbsp;</span> to
           ensure your notes are securely stored and accessible in the future.
-        </span>
-      </div>
-
+          </span>
+          </div>
+          
       <span className="text-xs text-center flex mt-32  opacity-50 justify-center items-center">
-        Continue without Signing In ?
+      Continue without Signing In ?
       </span>
 
       <span className="text-xs text-center my-2  flex justify-center items-center ">
         <Link
-          to="/notes"
-          className="flex justify-center items-center w-[20%] h-10"
+        to="/notes"
+        className="flex justify-center items-center w-[20%] h-10"
         >
-          <button className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:text-blue-500 hover:bg-transparent border-[1px] border-blue-500 ">
-            Use Temporary Notes
-          </button>
+        <button className="text-sm text-center text-black flex justify-center items-center duration-500 w-[100%] h-10 rounded-full bg-blue-500 hover:text-blue-500 hover:bg-transparent border-[1px] border-blue-500 ">
+        Use Temporary Notes
+        </button>
         </Link>
-      </span>
-    </div>
-  );
+        </span>
+        </div>
+       
+    );
 }
 
 export default First;
