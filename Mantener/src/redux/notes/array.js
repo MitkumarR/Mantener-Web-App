@@ -65,10 +65,14 @@ export const arraySlice = createSlice({
     Remove: (state, action) => {
       state.value = state.value.filter((note) => note.Id !== action.payload);
     },
+
+    Erase: (state) => {
+      state.value = [];
+    },
   },
 });
 
-export const { Insert, Delete, Update, Hover, Archive, Pin, Remove } =
+export const { Insert, Delete, Update, Hover, Archive, Pin, Remove, Erase } =
   arraySlice.actions;
 
 export default arraySlice.reducer;

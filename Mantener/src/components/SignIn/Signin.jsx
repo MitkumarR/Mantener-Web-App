@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { signin, update_signin } from "../../redux/signer/signerSlice";
+import { tempUse, update_tempUse } from "../../redux/signer/tempUserSlice";
 import { updateUsername } from "../../redux/user/usernameSlice";
 import { userid } from "../../redux/user/useridSlice";
 import { useNavigate } from "react-router-dom";
@@ -82,6 +83,10 @@ function Signin() {
         const newSignin = true;
         dispatch(update_signin(newSignin));
         saveToLocal("issigned", newSignin);
+        
+        const newTempUser = false;
+        dispatch(update_tempUse(newTempUser));
+        saveToLocal("tempUser", newTempUser);
 
         console.log(data, res);
 

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { update } from "../clicked/sidebarSlice";
 
 const initialState = {
   value: false,

@@ -9,6 +9,7 @@ import griddedReducer from './gridded/griddedSlice'
 import sidebarReducer from './clicked/sidebarSlice'
 import usernameReducer from './user/usernameSlice'
 import useridReducer from './user/useridSlice'
+import tempUserReducer from './signer/tempUserSlice'
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     gridded: griddedReducer,
     username: usernameReducer,
     userid: useridReducer,
+    tempUser: tempUserReducer,
   },
 })

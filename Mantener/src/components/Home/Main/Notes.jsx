@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 
 import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
+import { tempUse, update_tempUse } from "../../../redux/signer/tempUserSlice";
+
 import { add } from "../../../redux/adder/adderSlice";
 import { note, list, draw, done } from "../../../redux/adding/addingSlice";
 import { updateUsername } from "../../../redux/user/usernameSlice";
@@ -14,6 +16,7 @@ import {
   Hover,
   Archive,
   Pin,
+  Erase,
 } from "../../../redux/notes/array";
 
 import {
@@ -32,9 +35,12 @@ import {
 } from "react-icons/pi";
 import Archived from "./Archived";
 import { Await } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Notes() {
   const issigned = useSelector((state) => state.signed.value);
+  const istempUser = useSelector((state) => state.tempUser.value);
+
   const wantAdd = useSelector((state) => state.added.value);
   const whattoAdd = useSelector((state) => state.adding.value);
   const Notes = useSelector((state) => state.notes.value);
@@ -44,6 +50,8 @@ function Notes() {
   const userName = useSelector((state) => state.username.value);
   const dispatch = useDispatch();
   // const issigned = true;
+
+  const navigate = useNavigate();
 
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
@@ -67,39 +75,61 @@ function Notes() {
     // setN(formattedNote);
   };
 
+
   useEffect(() => {
+
     const fetchData = async () => {
-      try {
-        let user_name = localStorage.getItem('userName'); 
-        // let user_name = userName; 
-        if (!user_name) {
-          console.error("User Name not found in localStorage");
-          return;
+      if (istempUser) {
+        const notes = [];
+        dispatch(Update(notes));
+      } else {
+        try {
+          let user_name = localStorage.getItem("userName");
+          // let user_name = userName;
+          if (!user_name) {
+            console.error("User Name not found in localStorage");
+            return;
+          }
+
+          user_name = user_name.replace(/^"|"$/g, "");
+
+          const response = await axios.get(
+            `http://localhost:3000/notes/${user_name}`
+          );
+          const notes = response.data;
+
+          if (notes) {
+            dispatch(Update(notes));
+          }
+
+          // if (username) {
+          //   const updated_userName = username;
+          //   dispatch(updateUsername(updated_userName));
+          //   console.log(updated_userName);
+          // }
+        } catch (error) {
+          console.error("Error fetching data from  backend", error);
         }
-
-        user_name = user_name.replace(/^"|"$/g, '');
-
-        const response = await axios.get(`http://localhost:3000/notes/${user_name}`);
-        const notes  = response.data;
-
-        if (notes) {
-          dispatch(Update(notes));
-        }
-    
-
-        // if (username) {
-        //   const updated_userName = username;
-        //   dispatch(updateUsername(updated_userName));
-        //   console.log(updated_userName);
-        // }
-    
-      } catch (error) {
-        console.error("Error fetching data from  backend", error);
       }
     };
 
-    fetchData();
-
+    if (issigned) {
+      fetchData();
+    } else if (istempUser) {
+      const NoteString = localStorage.getItem("Notes");
+      if (NoteString) {
+        try {
+          const updatedNotes = JSON.parse(NoteString);
+          if (Array.isArray(updatedNotes)) {
+            dispatch(Update(updatedNotes));
+          } else {
+            console.error("Loaded data is not an array", updatedNotes);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage", error);
+        }
+      }
+    }
     // const NoteString = localStorage.getItem("Notes");
     // if (NoteString) {
     //   try {
@@ -115,12 +145,16 @@ function Notes() {
     // }
     // setLoaded(true);
 
-    fetchData();
+    // fetchData();
     // getUsers();
-  }, [dispatch]);
+  }, [dispatch, issigned, navigate, istempUser]);
 
-  const saveToLocal = (params) => {
-    localStorage.setItem("Notes", JSON.stringify(params));
+  const saveToLocal = (item, params) => {
+    try {
+      localStorage.setItem(item, JSON.stringify(params));
+    } catch (error) {
+      console.log("Failed to save to localStorage:", error);
+    }
   };
 
   const onSave = async (note) => {
@@ -132,44 +166,56 @@ function Notes() {
     const Pinned = false;
     const Hovered = false;
 
-    let user_name = localStorage.getItem("userName"); 
-    user_name = user_name.replace(/^"|"$/g, '');
+    let user_name = localStorage.getItem("userName");
+    user_name = user_name.replace(/^"|"$/g, "");
 
     const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
 
-    try {
-
-      const response = await axios.post('http://localhost:3000/notes', {
-        username : user_name,
-        note: noteData,
-      });
-
-      if (response.status === 201) {
-        // dispatch(Insert(noteData));
-        // const updatedNotes = [...Notes, noteData];
-        // saveToLocal(updatedNotes);
-
-        setT("");
-        setFormattedNote("");
-        setN("");
-      } else {
-        console.error("Error saving note", response.data.message);
+    if(issigned)
+    {
+      try {
+        const response = await axios.post("http://localhost:3000/notes", {
+          username: user_name,
+          note: noteData,
+        });
+  
+        if (response.status === 201) {
+          // dispatch(Insert(noteData));
+          // const updatedNotes = [...Notes, noteData];
+          // saveToLocal(updatedNotes);
+  
+          setT("");
+          setFormattedNote("");
+          setN("");
+        } else {
+          console.error("Error saving note", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error saving note to backend", error);
       }
-    } catch (error) {
-      console.error("Error saving note to backend", error);
+      
     }
+    else
+    {
+      dispatch(Insert(noteData));
+      const updatedNotes = [...Notes, noteData];
+      saveToLocal("Notes", updatedNotes); 
+
+      setT("");
+      setFormattedNote("");
+      setN("");
+    }
+    
   };
 
-  const onChange = async (changedData, itemId) =>{
-
-    let user_name = localStorage.getItem("userName"); 
-    user_name = user_name.replace(/^"|"$/g, '');
+  const onChange = async (changedData, itemId) => {
+    let user_name = localStorage.getItem("userName");
+    user_name = user_name.replace(/^"|"$/g, "");
 
     try {
-
-      const response = await axios.post('http://localhost:3000/notes/change', {
-        username : user_name,
-        itemid : itemId,
+      const response = await axios.post("http://localhost:3000/notes/change", {
+        username: user_name,
+        itemid: itemId,
         changes: changedData,
       });
 
@@ -508,20 +554,19 @@ function Notes() {
 
 export default Notes;
 
+// const config = {
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// };
 
-      // const config = {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // };
+// const body = JSON.stringify({
+//   id: userId,
+//   note: noteData,
+// });
 
-      // const body = JSON.stringify({
-      //   id: userId,
-      //   note: noteData,
-      // });
-
-      // const response = await axios.post(
-      //   `http://localhost:3000/notes`,
-      //   body,
-      //   config
-      // );
+// const response = await axios.post(
+//   `http://localhost:3000/notes`,
+//   body,
+//   config
+// );

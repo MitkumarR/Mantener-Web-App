@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 
@@ -13,6 +14,8 @@ import { RxCross1 } from "react-icons/rx";
 import { GoSearch } from "react-icons/go";
 import { CiGrid2H, CiGrid41, CiRedo, CiSettings, CiUser } from "react-icons/ci";
 import { update_signin } from "../../../redux/signer/signerSlice";
+import { tempUse, update_tempUse } from "../../../redux/signer/tempUserSlice";
+import { Update, Erase } from "../../../redux/notes/array";
 
 function Navbar() {
   const isClicked = useSelector((state) => state.clicked.value);
@@ -20,24 +23,26 @@ function Navbar() {
   const isgridded = useSelector((state) => state.gridded.value);
   const issignedIn = useSelector((state) => state.signed.value);
   const userName = useSelector((state) => state.username.value);
+  const Notes = useSelector((state) => state.notes.value);
   // const userId  = useSelector((state)=> state.userid.value);
 
   const [isClickedOnSetting, setisClickedOnSetting] = useState(false);
+  const [isClickedOnUser, setisClickedOnUser] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     const fetchData = async () => {
       try {
-        let user_name = localStorage.getItem('userName');
+        let user_name = localStorage.getItem("userName");
         // let user_name = userName;
         if (!user_name) {
-          console.error('User Name not found in localStorage');
+          console.error("User Name not found in localStorage");
           return;
         }
 
-        user_name = user_name.replace(/^"|"$/g, '');
+        user_name = user_name.replace(/^"|"$/g, "");
         // const response = await axios.get(`http://localhost:3000/notes`);
         // const data = response.data;
 
@@ -48,9 +53,8 @@ function Navbar() {
         if (user_name) {
           dispatch(updateUsername(user_name));
         }
-        
       } catch (error) {
-        console.error('Error fetching data from backend', error);
+        console.error("Error fetching data from backend", error);
       }
     };
 
@@ -75,17 +79,15 @@ function Navbar() {
         console.error("Failed to parse localStorage item 'opt':", error);
       }
     }
-
   }, [dispatch, userName]);
 
-  const saveToLocal = (params) => {
+  const saveToLocal = (item, params) => {
     try {
-      localStorage.setItem("isgridded", JSON.stringify(params));
+      localStorage.setItem(item, JSON.stringify(params));
     } catch (error) {
       console.error("Failed to save to localStorage:", error);
     }
   };
-  
 
   const delay = (d) => {
     return new Promise((resolve, reject) => {
@@ -103,6 +105,10 @@ function Navbar() {
 
   const handleisClickedOnSetting = () => {
     setisClickedOnSetting(!isClickedOnSetting);
+  };
+
+  const handleisClickedOnUser = () => {
+    setisClickedOnUser(!isClickedOnUser);
   };
 
   return (
@@ -175,9 +181,7 @@ function Navbar() {
           </button>
         </div>
 
-        <ul
-          className={`flex justify-end gap-5 items-center mx-[2%] w-[30%]`}
-        >
+        <ul className={`flex justify-end gap-5 items-center mx-[2%] w-[30%]`}>
           <li>
             <button
               onClick={onRefresh}
@@ -195,7 +199,7 @@ function Navbar() {
               onClick={() => {
                 dispatch(grid());
                 const newGrid = !isgridded;
-                saveToLocal(newGrid);
+                saveToLocal("isgridded", newGrid);
               }}
               className={`GridStyle flex justify-center items-center rounded-full w-7 h-7 hover:bg-blue-500 hover:bg-opacity-40`}
             >
@@ -215,37 +219,72 @@ function Navbar() {
             </button>
 
             {isClickedOnSetting && (
-          <div
-            className={`absolute top-[2rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
-          >
-            <ul className={`p-1`}>
-              <li
-                className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+              <div
+                className={`absolute top-[2rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
               >
-                <button
-                >
-                  Light Mode
-                </button>
-              </li>
-              <li
-                className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
-              >
-                <button>Help</button>
-              </li>
-            </ul>
-          </div>
-        )}
+                <ul className={`p-1`}>
+                  <li
+                    className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+                  >
+                    <button>Light Mode</button>
+                  </li>
+                  <li
+                    className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+                  >
+                    <button>Help</button>
+                  </li>
+                </ul>
+              </div>
+            )}
           </li>
         </ul>
 
-        
-
         {issignedIn ? (
-          <div className="flex justify-center w-[20%] gap-3 items-center">
-            <div className="User p-1 rounded-full border-white border-[1px] size-7 flex justify-center items-center">
+          <div className=" relative flex justify-center w-[20%] gap-3 items-center">
+            <button
+              onClick={handleisClickedOnUser}
+              className="User p-1 rounded-full border-white border-[1px] size-7 flex justify-center items-center"
+            >
               <CiUser className="size-4 " />
+            </button>
+            <div className="flex justify-center items-center text-sm">
+              Hi !&nbsp; {userName}
             </div>
-            <div className="flex justify-center items-center text-sm">Hi !&nbsp; {userName}</div>
+
+            {isClickedOnUser && (
+              <div
+                className={`absolute top-[2rem] border-[1px] w-[10rem] text-[10px] h-fit border-white bg-black border-opacity-30 rounded`}
+              >
+                <ul className={`p-1`}>
+                  <li
+                    className={`p-0.5 hover:bg-white hover:bg-opacity-10 rounded`}
+                  >
+                    <button
+                      onClick={() => {
+                        dispatch(update_signin());
+                        const newIsSignin = false;
+                        saveToLocal("issigned", newIsSignin);
+                        
+                        dispatch(update_tempUse());
+                        const newTempUse = false;
+                        saveToLocal("tempUser", newTempUse);
+                        
+                        dispatch(updateUsername(""));
+                        const newUsername = "";
+                        saveToLocal("userName", newUsername);
+                        
+                        dispatch(Erase());
+                        const newNotes = [];
+                        saveToLocal("Notes", newNotes);
+                        navigate("/");
+                      }}
+                    >
+                      Sign Out
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex justify-center  items-center w-full">
