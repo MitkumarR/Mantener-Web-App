@@ -75,9 +75,7 @@ function Notes() {
     // setN(formattedNote);
   };
 
-
   useEffect(() => {
-
     const fetchData = async () => {
       if (istempUser) {
         const notes = [];
@@ -130,23 +128,7 @@ function Notes() {
         }
       }
     }
-    // const NoteString = localStorage.getItem("Notes");
-    // if (NoteString) {
-    //   try {
-    //     const updatedNotes = JSON.parse(NoteString);
-    //     if (Array.isArray(updatedNotes)) {
-    //       dispatch(Update(updatedNotes));
-    //     } else {
-    //       console.error("Loaded data is not an array", updatedNotes);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error parsing JSON from localStorage", error);
-    //   }
-    // }
-    // setLoaded(true);
-
-    // fetchData();
-    // getUsers();
+   
   }, [dispatch, issigned, navigate, istempUser]);
 
   const saveToLocal = (item, params) => {
@@ -171,61 +153,59 @@ function Notes() {
 
     const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
 
-    if(issigned)
-    {
+    if (issigned) {
       try {
         const response = await axios.post("http://localhost:3000/notes", {
           username: user_name,
           note: noteData,
         });
-  
+
         if (response.status === 201) {
-          // dispatch(Insert(noteData));
-          // const updatedNotes = [...Notes, noteData];
-          // saveToLocal(updatedNotes);
-  
+
           setT("");
           setFormattedNote("");
           setN("");
+          console.log(response.data.message);
         } else {
           console.error("Error saving note", response.data.message);
         }
       } catch (error) {
         console.error("Error saving note to backend", error);
       }
-      
-    }
-    else
-    {
+    } else {
       dispatch(Insert(noteData));
       const updatedNotes = [...Notes, noteData];
-      saveToLocal("Notes", updatedNotes); 
+      saveToLocal("Notes", updatedNotes);
 
       setT("");
       setFormattedNote("");
       setN("");
     }
-    
   };
 
   const onChange = async (changedData, itemId) => {
     let user_name = localStorage.getItem("userName");
     user_name = user_name.replace(/^"|"$/g, "");
 
-    try {
-      const response = await axios.post("http://localhost:3000/notes/change", {
-        username: user_name,
-        itemid: itemId,
-        changes: changedData,
-      });
+    if (issigned) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/notes/change",
+          {
+            username: user_name,
+            itemid: itemId,
+            changes: changedData,
+          }
+        );
 
-      if (response.status === 201) {
-        console.log(response.data.message);
-      } else {
-        console.error("Error saving note", response.data.message);
+        if (response.status === 201) {
+          console.log(response.data.message);
+        } else {
+          console.error("Error saving note", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error saving note to backend", error);
       }
-    } catch (error) {
-      console.error("Error saving note to backend", error);
     }
   };
   return (
@@ -337,9 +317,29 @@ function Notes() {
                 <div
                   key={item.Id}
                   onMouseEnter={() => {
+                    const newNotes = Notes.map((note) =>
+                          note.Id === item.Id
+                            ? {
+                                ...note,
+                                Hovered: !item.Hovered,
+                              }
+                              : note
+                            );
+                    dispatch(Update(newNotes));
                     dispatch(Hover(item.Id));
                   }}
                   onMouseLeave={() => {
+
+                    const newNotes = Notes.map((note) =>
+                      note.Id === item.Id
+                        ? {
+                            ...note,
+                            Hovered: !item.Hovered,
+                          }
+                        : note
+                    );
+
+                    dispatch(Update(newNotes));
                     dispatch(Hover(item.Id));
                   }}
                   className={`block border-[1px]  place-self-auto border-white ${
@@ -353,19 +353,25 @@ function Notes() {
                     <button
                       onClick={() => {
                         dispatch(Pin(item.Id));
-                        const newNotes = Notes.map((note) =>
-                          note.Id === item.Id
-                            ? {
-                                ...note,
-                                Pinned: !note.Pinned,
-                                Deleted: false,
-                                Archived: false,
-                                Hovered: false,
-                              }
-                            : note
-                        );
+                        // const newNotes = Notes.map((note) =>
+                        //   note.Id === item.Id
+                        //     ? {
+                        //         ...note,
+                        //         Pinned: !note.Pinned,
+                        //         Deleted: false,
+                        //         Archived: false,
+                        //         Hovered: false,
+                        //       }
+                        //     : note
+                        // );
+
+                        const changedData = {
+                          Pinned: !item.Pinned,
+                          Deleted: false,
+                          Archived: false,
+                        };
                         // saveToLocal(newNotes);
-                        onChange(newNotes, item.id);
+                        onChange(changedData, item.Id);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
                         !item.Hovered ? "opacity-100" : "opacity-0"
@@ -387,19 +393,25 @@ function Notes() {
                       <button
                         onClick={() => {
                           dispatch(Archive(item.Id));
-                          const newNotes = Notes.map((note) =>
-                            note.Id === item.Id
-                              ? {
-                                  ...note,
-                                  Archived: !note.Archived,
-                                  Deleted: false,
-                                  Pinned: false,
-                                  Hovered: false,
-                                }
-                              : note
-                          );
+                          // const newNotes = Notes.map((note) =>
+                          //   note.Id === item.Id
+                          //     ? {
+                          //         ...note,
+                          //         Archived: !note.Archived,
+                          //         Deleted: false,
+                          //         Pinned: false,
+                          //         Hovered: false,
+                          //       }
+                          //     : note
+                          // );
+
+                          const changedData = {
+                            Pinned: false,
+                            Deleted: false,
+                            Archived: !item.Archived,
+                          };
                           // saveToLocal(newNotes);
-                          onChange(newNotes, item.id);
+                          onChange(changedData, item.Id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -410,19 +422,26 @@ function Notes() {
                       <button
                         onClick={() => {
                           dispatch(Delete(item.Id));
-                          const newNotes = Notes.map((note) =>
-                            note.Id === item.Id
-                              ? {
-                                  ...note,
-                                  Deleted: !note.Deleted,
-                                  Archived: false,
-                                  Pinned: false,
-                                  Hovered: false,
-                                }
-                              : note
-                          );
+                          // const newNotes = Notes.map((note) =>
+                          //   note.Id === item.Id
+                          //     ? {
+                          //         ...note,
+                          //         Deleted: !note.Deleted,
+                          //         Archived: false,
+                          //         Pinned: false,
+                          //         Hovered: false,
+                          //       }
+                          //     : note
+                          // );
+
+                          const changedData = {
+                            Pinned: false,
+                            Deleted: !item.Deleted,
+                            Archived: false,
+                          };
+
                           // saveToLocal(newNotes);
-                          onChange(newNotes, item.id);
+                          onChange(changedData, item.Id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -464,19 +483,25 @@ function Notes() {
                     <button
                       onClick={() => {
                         dispatch(Pin(item.Id));
-                        const newNotes = Notes.map((note) =>
-                          note.Id === item.Id
-                            ? {
-                                ...note,
-                                Pinned: !note.Pinned,
-                                Deleted: false,
-                                Archived: false,
-                                Hovered: false,
-                              }
-                            : note
-                        );
+                        // const newNotes = Notes.map((note) =>
+                        //   note.Id === item.Id
+                        //     ? {
+                        //         ...note,
+                        //         Pinned: !note.Pinned,
+                        //         Deleted: false,
+                        //         Archived: false,
+                        //         Hovered: false,
+                        //       }
+                        //     : note
+                        // );
+
+                        const changedData = {
+                          Pinned: !item.Pinned,
+                          Deleted: false,
+                          Archived: false,
+                        };
                         // saveToLocal(newNotes);
-                        onChange(newNotes, item.id);
+                        onChange(changedData, item.Id);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
                         item.Hovered ? "opacity-100" : "opacity-0"
@@ -498,19 +523,25 @@ function Notes() {
                       <button
                         onClick={() => {
                           dispatch(Archive(item.Id));
-                          const newNotes = Notes.map((note) =>
-                            note.Id === item.Id
-                              ? {
-                                  ...note,
-                                  Archived: !note.Archived,
-                                  Deleted: false,
-                                  Pinned: false,
-                                  Hovered: false,
-                                }
-                              : note
-                          );
+                          // const newNotes = Notes.map((note) =>
+                          //   note.Id === item.Id
+                          //     ? {
+                          //         ...note,
+                          //         Archived: !note.Archived,
+                          //         Deleted: false,
+                          //         Pinned: false,
+                          //         Hovered: false,
+                          //       }
+                          //     : note
+                          // );
+
+                          const changedData = {
+                            Pinned: false,
+                            Deleted: false,
+                            Archived: !item.Archive,
+                          };
                           // saveToLocal(newNotes);
-                          onChange(newNotes, item.id);
+                          onChange(changedData, item.Id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >
@@ -521,19 +552,25 @@ function Notes() {
                       <button
                         onClick={() => {
                           dispatch(Delete(item.Id));
-                          const newNotes = Notes.map((note) =>
-                            note.Id === item.Id
-                              ? {
-                                  ...note,
-                                  Deleted: !note.Deleted,
-                                  Archived: false,
-                                  Pinned: false,
-                                  Hovered: false,
-                                }
-                              : note
-                          );
+                          // const newNotes = Notes.map((note) =>
+                          //   note.Id === item.Id
+                          //     ? {
+                          //         ...note,
+                          //         Deleted: !note.Deleted,
+                          //         Archived: false,
+                          //         Pinned: false,
+                          //         Hovered: false,
+                          //       }
+                          //     : note
+                          // );
+
+                          const changedData = {
+                            Pinned: false,
+                            Deleted: !item.Deleted,
+                            Archived: false,
+                          };
                           // saveToLocal(newNotes);
-                          onChange(newNotes, item.id);
+                          onChange(changedData, item.Id);
                         }}
                         className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                       >

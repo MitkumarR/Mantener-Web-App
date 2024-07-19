@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
+import axios from "axios";
 import {
   Delete,
   Update,
@@ -12,39 +12,149 @@ import {
 import { PiXCircleLight, PiDownloadSimpleLight } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";
 function Bin() {
+
+  const issigned = useSelector((state) => state.signed.value);
+  const istempUser = useSelector((state) => state.tempUser.value);
+
   const Notes = useSelector((state) => state.notes.value);
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
   const isgridded = useSelector((state) => state.gridded.value);
   
-  useEffect(() => {
-    const NoteString = localStorage.getItem("Notes");
+  // useEffect(() => {
+  //   const NoteString = localStorage.getItem("Notes");
 
-    if (NoteString) {
-      try {
-        const updatedNotes = JSON.parse(NoteString);
-        if (Array.isArray(updatedNotes)) {
-          dispatch(Update(updatedNotes));
-        } else {
-          console.error("Loaded data is not an array", updatedNotes);
+  //   if (NoteString) {
+  //     try {
+  //       const updatedNotes = JSON.parse(NoteString);
+  //       if (Array.isArray(updatedNotes)) {
+  //         dispatch(Update(updatedNotes));
+  //       } else {
+  //         console.error("Loaded data is not an array", updatedNotes);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error parsing JSON from localStorage", error);
+  //     }
+  //   }
+  //   setLoaded(true);
+  // }, [dispatch]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (istempUser) {
+        const notes = [];
+        dispatch(Update(notes));
+      } else {
+        try {
+          let user_name = localStorage.getItem("userName");
+          // let user_name = userName;
+          if (!user_name) {
+            console.error("User Name not found in localStorage");
+            return;
+          }
+
+          user_name = user_name.replace(/^"|"$/g, "");
+
+          const response = await axios.get(
+            `http://localhost:3000/notes/${user_name}`
+          );
+          const notes = response.data;
+
+          if (notes) {
+            dispatch(Update(notes));
+          }
+
+          // if (username) {
+          //   const updated_userName = username;
+          //   dispatch(updateUsername(updated_userName));
+          //   console.log(updated_userName);
+          // }
+        } catch (error) {
+          console.error("Error fetching data from  backend", error);
         }
-      } catch (error) {
-        console.error("Error parsing JSON from localStorage", error);
+      }
+    };
+
+    if (issigned) {
+      fetchData();
+    } else if (istempUser) {
+      const NoteString = localStorage.getItem("Notes");
+      if (NoteString) {
+        try {
+          const updatedNotes = JSON.parse(NoteString);
+          if (Array.isArray(updatedNotes)) {
+            dispatch(Update(updatedNotes));
+          } else {
+            console.error("Loaded data is not an array", updatedNotes);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage", error);
+        }
       }
     }
-    setLoaded(true);
-  }, [dispatch]);
+   
+  }, [dispatch, issigned, istempUser]);
+
+  const onChange = async (changedData, itemId) => {
+    let user_name = localStorage.getItem("userName");
+    user_name = user_name.replace(/^"|"$/g, "");
+
+    if (issigned) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/notes/change",
+          {
+            username: user_name,
+            itemid: itemId,
+            changes: changedData,
+          }
+        );
+
+        if (response.status === 201) {
+          console.log(response.data.message);
+        } else {
+          console.error("Error saving note", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error saving note to backend", error);
+      }
+    }
+  };
+
+  const onRemove = async (itemId) => {
+    let user_name = localStorage.getItem("userName");
+    user_name = user_name.replace(/^"|"$/g, "");
+  
+    if (issigned) {
+      try {
+        const response = await axios.post("http://localhost:3000/notes/remove", {
+          username: user_name,
+          itemid: itemId,
+        });
+  
+        if (response.status === 201) {
+          console.log(response.data.message);
+        } else {
+          console.error("Error removing note", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error removing note to backend", error);
+      }
+    }
+  };
+  
 
   const saveToLocal = (params) => {
     localStorage.setItem("Notes", JSON.stringify(params));
   };
+
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-[2rem] w-[100%] justify-start items-center">
         <div className={`${
             isgridded ? "grid justify-center" : "flex flex-wrap grid-cols-5"
           } h-fit mx-2 my-2 gap-2 `}>
-          {loaded &&
+          {
             Notes.map(
               (item) =>
                 item.Deleted && (
@@ -72,18 +182,25 @@ function Bin() {
                         <button
                           onClick={() => {
                             dispatch(Delete(item.Id));
-                            const newNotes = Notes.map((note) =>
-                              note.Id === item.Id
-                                ? {
-                                    ...note,
-                                    Deleted: !note.Deleted,
-                                    Archived: false,
-                                    Pinned: false,
-                                    Hovered: false,
-                                  }
-                                : note
-                            );
-                            saveToLocal(newNotes);
+                            // const newNotes = Notes.map((note) =>
+                            //   note.Id === item.Id
+                            //     ? {
+                            //         ...note,
+                            //         Deleted: !note.Deleted,
+                            //         Archived: false,
+                            //         Pinned: false,
+                            //         Hovered: false,
+                            //       }
+                            //     : note
+                            // );
+                            const changedData = {
+                              Pinned: false,
+                              Deleted: !item.Deleted,
+                              Archived: false,
+                            };
+                            // saveToLocal(newNotes);
+                            onChange(changedData, item.Id);
+
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >
@@ -94,8 +211,10 @@ function Bin() {
                         <button
                           onClick={() => {
                             dispatch(Remove(item.Id));
-                            const newNotes = Notes.filter((note) => note.Id !== item.Id);
-                            saveToLocal(newNotes);
+                            // const newNotes = Notes.filter((note) => note.Id !== item.Id);
+                            // saveToLocal(newNotes);
+
+                            onRemove(item.Id);
                           }}
                           className={`flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20`}
                         >

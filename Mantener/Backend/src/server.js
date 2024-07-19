@@ -102,20 +102,23 @@ app.post('/notes', async (req, res) => {
 
 app.post('/notes/change', async (req, res) => {
   
-  const changes = req.body.changes; 
-  const itemid = req.body.itemid; 
-  try {
-    const user = await User.findOne({ username : req.body.username });
-    if (user) {
-        
+  // const changes = req.body.changes; 
+  // const itemid = req.body.itemid; 
 
-      user.notes.map((note) =>
+  const { username, itemid, changes } = req.body;
+
+  try {
+    // const user = await User.findOne({ username : req.body.username });
+    const user = await User.findOne({ username });
+    if (user) {
+      
+      user.notes = user.notes.map((note) =>
         note.Id === itemid
           ? {
               ...note,
               Pinned : changes.Pinned,
               Deleted : changes.Deleted,
-              Archive : changes.Archive,
+              Archived : changes.Archived,
             }
           : note
       );
@@ -126,6 +129,26 @@ app.post('/notes/change', async (req, res) => {
     } else {
       res.status(404).json({ message: 'User not found' });
     }
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving changes', error });
+  }
+});
+
+app.post('/notes/remove', async (req, res) => {
+
+  const { username, itemid} = req.body;
+  try {
+    const user = await User.findOne({ username });
+    if (user) {
+      
+      user.notes = user.notes.filter((note) => note.Id !== itemid);
+
+      await user.save();
+      res.status(201).json({ message: 'Note removed successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+
   } catch (error) {
     res.status(500).json({ message: 'Error saving changes', error });
   }
