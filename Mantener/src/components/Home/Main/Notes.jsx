@@ -317,41 +317,23 @@ function Notes() {
                 <div
                   key={item.Id}
                   onMouseEnter={() => {
-                    const newNotes = Notes.map((note) =>
-                          note.Id === item.Id
-                            ? {
-                                ...note,
-                                Hovered: !item.Hovered,
-                              }
-                              : note
-                            );
-                    dispatch(Update(newNotes));
                     dispatch(Hover(item.Id));
                   }}
                   onMouseLeave={() => {
-
-                    const newNotes = Notes.map((note) =>
-                      note.Id === item.Id
-                        ? {
-                            ...note,
-                            Hovered: !item.Hovered,
-                          }
-                        : note
-                    );
-
-                    dispatch(Update(newNotes));
                     dispatch(Hover(item.Id));
                   }}
                   className={`block border-[1px]  place-self-auto border-white ${
                     isgridded ? "w-[30rem]" : "w-[13rem]"
                   } h-fit rounded row-end-auto row-start-auto overflow-hidden ${
-                    !item.Hovered ? "border-opacity-50" : "border-opacity-30"
+                    item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
                 >
                   <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
                     <h6>{item.Title}</h6>
                     <button
                       onClick={() => {
+
+                        dispatch(Hover(item.Id));
                         dispatch(Pin(item.Id));
                         // const newNotes = Notes.map((note) =>
                         //   note.Id === item.Id
@@ -374,7 +356,7 @@ function Notes() {
                         onChange(changedData, item.Id);
                       }}
                       className={`absolute right-1 p-1 flex justify-center items-center rounded-full w-[1.5rem] h-[1.5rem] hover:bg-white hover:bg-opacity-20 ${
-                        !item.Hovered ? "opacity-100" : "opacity-0"
+                        item.Hovered ? "opacity-100" : "opacity-0"
                       }`}
                     >
                       <PiPushPinFill />
@@ -386,7 +368,7 @@ function Notes() {
                   ></p>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
-                      !item.Hovered ? "opacity-100" : "opacity-0"
+                      item.Hovered ? "opacity-100" : "opacity-0"
                     }`}
                   >
                     <li className="flex justify-start items-center">
@@ -482,6 +464,7 @@ function Notes() {
                     <h6>{item.Title}</h6>
                     <button
                       onClick={() => {
+                        dispatch(Hover(item.Id));
                         dispatch(Pin(item.Id));
                         // const newNotes = Notes.map((note) =>
                         //   note.Id === item.Id
