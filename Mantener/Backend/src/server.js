@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, Int32 } = require("mongodb");
 const dotenv = require("dotenv");
 const bodyparser = require("body-parser");
 const path  = require("path");
@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 
 const cors = require("cors");
 const { collection } = require("./config");
+const { Writable } = require("stream");
 // const { change } = require("../../src/redux/clicked/clickedSlice");
 dotenv.config();
 
@@ -48,6 +49,9 @@ const noteSchema = new mongoose.Schema({
   Deleted: { type: Boolean, default: false },
   Pinned: { type: Boolean, default: false },
   Archived: { type: Boolean, default: false },
+  Opened: { type: Boolean, default: false },
+  Writable: { type: Boolean, default: false },
+  Bgcolor: { type: Int32, default: 0},
   Hovered: { type: Boolean, default: false },
 }, { _id: false });
 
@@ -87,6 +91,9 @@ app.post('/notes', async (req, res) => {
           Deleted: false,
           Pinned: false,
           Archived: false,
+          Opened: false,
+          Writable: false,
+          Bgcolor: 0,
           Hovered: false
         });
 

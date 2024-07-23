@@ -11,7 +11,7 @@ export const arraySlice = createSlice({
   initialState,
   reducers: {
     Insert: (state, action) => {
-      const { Id, Title, Note, Deleted, Pinned, Archived, Hovered } =
+      const { Id, Title, Note, Deleted, Pinned, Archived, Opened, Writable, Bgcolor, Hovered } =
         action.payload;
       if (!Array.isArray(state.value)) {
         console.error("Insert Error: state.value is not an array", state.value);
@@ -20,7 +20,7 @@ export const arraySlice = createSlice({
       console.log("Current state:", state.value); // Add logging
       state.value = [
         ...state.value,
-        { Id, Title, Note, Deleted, Pinned, Archived, Hovered },
+        { Id, Title, Note, Deleted, Pinned, Archived, Opened, Writable, Bgcolor, Hovered },
       ];
       console.log("Updated state:", state.value); // Add logging
     },
@@ -31,7 +31,7 @@ export const arraySlice = createSlice({
       const noteId = action.payload;
       state.value = state.value.map((note) =>
         note.Id === noteId
-          ? { ...note, Deleted: !note.Deleted, Archived: false, Pinned: false }
+          ? { ...note, Deleted: !note.Deleted, Archived: false, Pinned: false, Writable: false }
           : note
       );
       console.log(state.value);
@@ -46,7 +46,7 @@ export const arraySlice = createSlice({
       const noteId = action.payload;
       state.value = state.value.map((note) =>
         note.Id === noteId
-          ? { ...note, Archived: !note.Archived, Deleted: false, Pinned: false }
+          ? { ...note, Archived: !note.Archived, Deleted: false, Pinned: false, Writable: false }
           : note
       );
       console.log(state.value);

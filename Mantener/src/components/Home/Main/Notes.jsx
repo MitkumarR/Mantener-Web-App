@@ -50,13 +50,13 @@ function Notes() {
   const userName = useSelector((state) => state.username.value);
   const dispatch = useDispatch();
   // const issigned = true;
-
+  
   const navigate = useNavigate();
-
+  
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
   const [loaded, setLoaded] = useState(false);
-
+  
   const [formattedNote, setFormattedNote] = useState("");
 
   const {
@@ -147,11 +147,14 @@ function Notes() {
     const Deleted = false;
     const Pinned = false;
     const Hovered = false;
+    const Opened = false;
+    const Writable = false;
+    const Bgcolor = 0;
 
     let user_name = localStorage.getItem("userName");
     user_name = user_name.replace(/^"|"$/g, "");
 
-    const noteData = { Id, Title, Note, Deleted, Pinned, Archived, Hovered };
+    const noteData = { Id, Title, Note, Deleted, Pinned, Archived,Opened, Writable, Bgcolor, Hovered };
 
     if (issigned) {
       try {
