@@ -516,7 +516,7 @@ function Notes() {
                       className="text-xs px-2 py-1 text-left w-full break-all"
                       dangerouslySetInnerHTML={{ __html: item.Note }}
                     ></p>
-                    <button onClick={ ()=>{dispatch(Open(item.Id))}} className="absolute top-0  w-full h-full"></button>
+                    <button onClick={ ()=>{dispatch(Open(item.Id))}} className={`absolute top-0  w-full h-full ${item.Opened && "bg-white opacity-10"}`}></button>
                   </div>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
