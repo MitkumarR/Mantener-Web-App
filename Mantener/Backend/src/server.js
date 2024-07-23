@@ -51,7 +51,7 @@ const noteSchema = new mongoose.Schema({
   Archived: { type: Boolean, default: false },
   Opened: { type: Boolean, default: false },
   Writable: { type: Boolean, default: false },
-  Bgcolor: { type: Int32, default: 0},
+  Bgcolor: { type: Number, default: 0},
   Hovered: { type: Boolean, default: false },
 }, { _id: false });
 
@@ -92,7 +92,7 @@ app.post('/notes', async (req, res) => {
           Pinned: false,
           Archived: false,
           Opened: false,
-          Writable: false,
+          Writable: true,
           Bgcolor: 0,
           Hovered: false
         });
@@ -126,6 +126,7 @@ app.post('/notes/change', async (req, res) => {
               Pinned : changes.Pinned,
               Deleted : changes.Deleted,
               Archived : changes.Archived,
+              Writable : changes.Writable,
             }
           : note
       );

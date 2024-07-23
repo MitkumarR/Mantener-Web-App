@@ -16,6 +16,9 @@ import {
   Hover,
   Archive,
   Pin,
+  Open,
+  Write,
+  Color,
   Erase,
 } from "../../../redux/notes/array";
 
@@ -50,13 +53,13 @@ function Notes() {
   const userName = useSelector((state) => state.username.value);
   const dispatch = useDispatch();
   // const issigned = true;
-  
+
   const navigate = useNavigate();
-  
+
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
   const [loaded, setLoaded] = useState(false);
-  
+
   const [formattedNote, setFormattedNote] = useState("");
 
   const {
@@ -128,7 +131,6 @@ function Notes() {
         }
       }
     }
-   
   }, [dispatch, issigned, navigate, istempUser]);
 
   const saveToLocal = (item, params) => {
@@ -154,7 +156,18 @@ function Notes() {
     let user_name = localStorage.getItem("userName");
     user_name = user_name.replace(/^"|"$/g, "");
 
-    const noteData = { Id, Title, Note, Deleted, Pinned, Archived,Opened, Writable, Bgcolor, Hovered };
+    const noteData = {
+      Id,
+      Title,
+      Note,
+      Deleted,
+      Pinned,
+      Archived,
+      Opened,
+      Writable,
+      Bgcolor,
+      Hovered,
+    };
 
     if (issigned) {
       try {
@@ -164,7 +177,6 @@ function Notes() {
         });
 
         if (response.status === 201) {
-
           setT("");
           setFormattedNote("");
           setN("");
@@ -335,7 +347,6 @@ function Notes() {
                     <h6>{item.Title}</h6>
                     <button
                       onClick={() => {
-
                         dispatch(Hover(item.Id));
                         dispatch(Pin(item.Id));
                         // const newNotes = Notes.map((note) =>
@@ -354,6 +365,7 @@ function Notes() {
                           Pinned: !item.Pinned,
                           Deleted: false,
                           Archived: false,
+                          Writable: true,
                         };
                         // saveToLocal(newNotes);
                         onChange(changedData, item.Id);
@@ -394,6 +406,7 @@ function Notes() {
                             Pinned: false,
                             Deleted: false,
                             Archived: !item.Archived,
+                            Writable: true,
                           };
                           // saveToLocal(newNotes);
                           onChange(changedData, item.Id);
@@ -423,6 +436,7 @@ function Notes() {
                             Pinned: false,
                             Deleted: !item.Deleted,
                             Archived: false,
+                            Writable: false,
                           };
 
                           // saveToLocal(newNotes);
@@ -485,6 +499,7 @@ function Notes() {
                           Pinned: !item.Pinned,
                           Deleted: false,
                           Archived: false,
+                          Writable: true,
                         };
                         // saveToLocal(newNotes);
                         onChange(changedData, item.Id);
@@ -496,10 +511,13 @@ function Notes() {
                       <PiPushPinThin />
                     </button>
                   </div>
-                  <p
-                    className="text-xs px-2 py-1 text-left w-full break-all"
-                    dangerouslySetInnerHTML={{ __html: item.Note }}
-                  ></p>
+                  <div className="relative">
+                    <p
+                      className="text-xs px-2 py-1 text-left w-full break-all"
+                      dangerouslySetInnerHTML={{ __html: item.Note }}
+                    ></p>
+                    <button onClick={ ()=>{dispatch(Open(item.Id))}} className="absolute top-0  w-full h-full"></button>
+                  </div>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
                       item.Hovered ? "opacity-100" : "opacity-0"
@@ -525,6 +543,7 @@ function Notes() {
                             Pinned: false,
                             Deleted: false,
                             Archived: !item.Archive,
+                            Writable: true,
                           };
                           // saveToLocal(newNotes);
                           onChange(changedData, item.Id);
@@ -554,6 +573,7 @@ function Notes() {
                             Pinned: false,
                             Deleted: !item.Deleted,
                             Archived: false,
+                            Writable: false,
                           };
                           // saveToLocal(newNotes);
                           onChange(changedData, item.Id);

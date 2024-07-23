@@ -61,6 +61,39 @@ export const arraySlice = createSlice({
 
       console.log(state.value);
     },
+    
+    Open: (state, action) => {
+      const noteId = action.payload;
+      state.value = state.value.map((note) =>
+        note.Id === noteId
+          ? { ...note, Opened: !note.Opened }
+          : note
+      );
+
+      console.log(state.value);
+    },
+
+    Color: (state, action, c) => {
+      const noteId = action.payload;
+      state.value = state.value.map((note) =>
+        note.Id === noteId
+          ? { ...note, Bgcolor: c }
+          : note
+      );
+
+      console.log(state.value);
+    },
+    
+    Write: (state, action, t) => {
+      const noteId = action.payload;
+      state.value = state.value.map((note) =>
+        note.Id === noteId
+          ? { ...note, Bgcolor: t }
+          : note
+      );
+
+      console.log(state.value);
+    },
 
     Remove: (state, action) => {
       state.value = state.value.filter((note) => note.Id !== action.payload);
@@ -72,7 +105,7 @@ export const arraySlice = createSlice({
   },
 });
 
-export const { Insert, Delete, Update, Hover, Archive, Pin, Remove, Erase } =
+export const { Insert, Delete, Update, Hover, Archive, Pin, Remove, Erase, Open, Write, Color } =
   arraySlice.actions;
 
 export default arraySlice.reducer;
