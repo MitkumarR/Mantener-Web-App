@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { signin } from "../../../redux/signer/signerSlice";
@@ -41,6 +42,8 @@ import { Await } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function Notes() {
+
+  const textareaRef = useRef(null);
   const issigned = useSelector((state) => state.signed.value);
   const istempUser = useSelector((state) => state.tempUser.value);
 
@@ -59,6 +62,7 @@ function Notes() {
   const [T, setT] = React.useState("");
   const [N, setN] = React.useState("");
   const [loaded, setLoaded] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   const [formattedNote, setFormattedNote] = useState("");
 
@@ -69,14 +73,8 @@ function Notes() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setN(value);
-    // Replace newline characters with <br/>
-    const formatted = value.replace(/\n/g, "<br>");
-    setFormattedNote(formatted);
-    // setN(formattedNote);
-  };
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +131,26 @@ function Notes() {
     }
   }, [dispatch, issigned, navigate, istempUser]);
 
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [N]);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    textarea.style.height = 'auto'; // Reset height
+    textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scroll height
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setN(value);
+    // Replace newline characters with <br/>
+    const formatted = value.replace(/\n/g, "<br>");
+    setFormattedNote(formatted);
+    // setN(formattedNote);
+    adjustTextareaHeight();
+  };
+  
   const saveToLocal = (item, params) => {
     try {
       localStorage.setItem(item, JSON.stringify(params));
@@ -141,6 +159,7 @@ function Notes() {
     }
   };
 
+ 
   const onSave = async (note) => {
     const Id = uuidv4();
     const Title = T;
@@ -223,6 +242,7 @@ function Notes() {
       }
     }
   };
+
   return (
     <div className="absolute inset-y-0 right-5 top-20 w-[90%] justify-center">
       <div className="h-fit w-[100%] justify-start items-center">
@@ -295,11 +315,13 @@ function Notes() {
                   type="text"
                   placeholder="Take notes..."
                   value={N}
+                  ref={textareaRef}
                   onChange={handleInputChange}
                   // onChange={(e) => {
                   //   setN(e.target.value);
                   // }}
-                  className="overflow-hidden overflow-y-auto text-xs w-[100%] h-[10rem] bg-black focus:outline-none"
+                  className="overflow-hidden overflow-y-auto text-xs w-[100%] min-h-[10rem] h-fit max-h-[40rem] bg-black focus:outline-none"
+                  style={{ resize: "none" }}
                 />
 
                 <div className="w-full flex justify-end">
@@ -377,10 +399,26 @@ function Notes() {
                       <PiPushPinFill />
                     </button>
                   </div>
-                  <p
-                    className="text-xs px-2 py-1 text-left w-full break-all"
-                    dangerouslySetInnerHTML={{ __html: item.Note }}
-                  ></p>
+                  <div className="relative">
+                    <p
+                      className="text-xs px-2 py-1 text-left w-full break-all"
+                      dangerouslySetInnerHTML={{ __html: item.Note }}
+                    ></p>
+                    <Link 
+                      to={`/note`}
+                      state={{ noteId: item.Id }}
+                      >
+                      <button
+                        onClick={() => {
+                          dispatch(Open(item.Id));
+                          setOpened(true);
+                        }}
+                        className={`absolute top-0  w-full h-full ${
+                          item.Opened && "bg-white opacity-10"
+                        }`}
+                      ></button>
+                    </Link>
+                  </div>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${
                       item.Hovered ? "opacity-100" : "opacity-0"
@@ -516,7 +554,18 @@ function Notes() {
                       className="text-xs px-2 py-1 text-left w-full break-all"
                       dangerouslySetInnerHTML={{ __html: item.Note }}
                     ></p>
-                    <button onClick={ ()=>{dispatch(Open(item.Id))}} className={`absolute top-0  w-full h-full ${item.Opened && "bg-white opacity-10"}`}></button>
+                    <Link 
+                      to="/note">
+                      <button
+                        onClick={() => {
+                          dispatch(Open(item.Id));
+                          setOpened(true);
+                        }}
+                        className={`absolute top-0  w-full h-full ${
+                          item.Opened && "bg-white opacity-10"
+                        }`}
+                      ></button>
+                    </Link>
                   </div>
                   <ul
                     className={`flex justify-start items-center px-2 py-1 w-full gap-2 ${

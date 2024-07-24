@@ -12,6 +12,7 @@ import Archived from "./components/Home/Main/Archived";
 import Notes from "./components/Home/Main/Notes";
 import Bin from "./components/Home/Main/Bin";
 import First from "./components/Home/Main/First";
+import Note from "./components/Home/Main/Note";
 
 function App() {
 
@@ -71,6 +72,20 @@ function App() {
           <div className="flex relative justify-start h-[100%]">
             <Sidebar />
             <Notes />
+          </div>
+
+          <div></div>
+        </>
+      ),
+    },
+    {
+      path: "/note",
+      element: (
+        <>
+          <Navbar />
+          <div className="flex relative justify-start h-[100%]">
+            <Sidebar />
+            <Note/>
           </div>
 
           <div></div>
