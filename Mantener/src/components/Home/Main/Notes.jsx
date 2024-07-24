@@ -137,20 +137,22 @@ function Notes() {
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
-    textarea.style.height = 'auto'; // Reset height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scroll height
+    if (textarea) { // Add null check here
+      textarea.style.height = 'auto'; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scroll height
+    }
   };
 
   const handleInputChange = (e) => {
+    adjustTextareaHeight();
     const value = e.target.value;
     setN(value);
     // Replace newline characters with <br/>
     const formatted = value.replace(/\n/g, "<br>");
     setFormattedNote(formatted);
     // setN(formattedNote);
-    adjustTextareaHeight();
   };
-  
+
   const saveToLocal = (item, params) => {
     try {
       localStorage.setItem(item, JSON.stringify(params));
@@ -317,9 +319,7 @@ function Notes() {
                   value={N}
                   ref={textareaRef}
                   onChange={handleInputChange}
-                  // onChange={(e) => {
-                  //   setN(e.target.value);
-                  // }}
+                  
                   className="overflow-hidden overflow-y-auto text-xs w-[100%] min-h-[10rem] h-fit max-h-[40rem] bg-black focus:outline-none"
                   style={{ resize: "none" }}
                 />
@@ -515,7 +515,7 @@ function Notes() {
                     item.Hovered ? "border-opacity-50" : "border-opacity-30"
                   }`}
                 >
-                  <div className="relative px-2 py-1 w-full min-h-8 flex justify-start items-center">
+                  <div className="relative px-2 py-1 w-full min-h-8 h-fit max-h-9 flex justify-start items-center">
                     <h6>{item.Title}</h6>
                     <button
                       onClick={() => {
@@ -551,11 +551,13 @@ function Notes() {
                   </div>
                   <div className="relative">
                     <p
-                      className="text-xs px-2 py-1 text-left w-full break-all"
+                      className="text-xs px-2 py-1 text-left w-full min-h-8 h-fit break-all"
                       dangerouslySetInnerHTML={{ __html: item.Note }}
                     ></p>
                     <Link 
-                      to="/note">
+                      to={`/note`}
+                      state={{ noteId: item.Id }}
+                      >
                       <button
                         onClick={() => {
                           dispatch(Open(item.Id));
