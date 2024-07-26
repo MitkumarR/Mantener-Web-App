@@ -56,7 +56,9 @@ function Note() {
 
   const navigate = useNavigate();
 
-  const note = Notes.find((item) => item.Id === noteId);
+  // const note = Notes.find((item) => item.Id === noteId);
+
+  const [note, setNote] = useState(Notes.find((item) => item.Id === noteId))
 
   const [T, setT] = React.useState(note ? note.Title : "");
   const [N, setN] = React.useState(
@@ -67,6 +69,7 @@ function Note() {
 
   const [formattedNote, setFormattedNote] = useState("");
 
+
   useEffect(() => {
     const fetchData = async () => {
       if (istempUser) {
@@ -74,14 +77,24 @@ function Note() {
         dispatch(Update(notes));
       } else {
         try {
+
+          console.log("Hi");
+          
           let user_name = localStorage.getItem("userName");
+          let item_id = localStorage.getItem("itemId");
+
           // let user_name = userName;
           if (!user_name) {
             console.error("User Name not found in localStorage");
             return;
           }
+          if (!item_id) {
+            console.error("Item Id not found in localStorage");
+            return;
+          }
 
           user_name = user_name.replace(/^"|"$/g, "");
+          item_id = item_id.replace(/^"|"$/g, "");
 
           const response = await axios.get(
             `http://localhost:3000/notes/${user_name}`
@@ -90,44 +103,38 @@ function Note() {
 
           if (notes) {
             dispatch(Update(notes));
+            setNote(Notes.find((item) => item.Id === item_id));
           }
+
+          // if (username) {
+          //   const updated_userName = username;
+          //   dispatch(updateUsername(updated_userName));
+          //   console.log(updated_userName);
+          // }
         } catch (error) {
           console.error("Error fetching data from  backend", error);
         }
       }
     };
 
-    // if (issigned) {
-    //   fetchData();
-    // } else if (istempUser) {
-    //   const NoteString = localStorage.getItem("Notes");
-    //   if (NoteString) {
-    //     try {
-    //       const updatedNotes = JSON.parse(NoteString);
-    //       if (Array.isArray(updatedNotes)) {
-    //         dispatch(Update(updatedNotes));
-    //       } else {
-    //         console.error("Loaded data is not an array", updatedNotes);
-    //       }
-    //     } catch (error) {
-    //       console.error("Error parsing JSON from localStorage", error);
-    //     }
-    //   }
-    // }
-
-    // const handleBeforeUnload = (event) => {
-    //   const confirmationMessage =
-    //     "Are you sure you want to leave? All your data will be erased.";
-    //   event.returnValue = confirmationMessage;
-    //   return confirmationMessage;
-    // };
-
-    // window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // return () => {
-    //   window.removeEventListener("beforeunload", handleBeforeUnload);
-    // };
-  }, [dispatch, issigned, navigate, istempUser, note]);
+    if (issigned) {
+      fetchData();
+    } else if (istempUser) {
+      const NoteString = localStorage.getItem("Notes");
+      if (NoteString) {
+        try {
+          const updatedNotes = JSON.parse(NoteString);
+          if (Array.isArray(updatedNotes)) {
+            dispatch(Update(updatedNotes));
+          } else {
+            console.error("Loaded data is not an array", updatedNotes);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage", error);
+        }
+      }
+    }
+  }, [dispatch, issigned, navigate, istempUser]);
 
   useEffect(() => {
     adjustTextareaHeight();
@@ -195,6 +202,8 @@ function Note() {
     let user_name = localStorage.getItem("userName");
     user_name = user_name.replace(/^"|"$/g, "");
 
+    console.log("Data to be sent:", { user_name, itemId, editedData });
+
     if (issigned) {
       try {
         const response = await axios.post("http://localhost:3000/note", {
@@ -215,9 +224,9 @@ function Note() {
         console.error("Error saving note to backend", error);
       }
     } else {
-      dispatch(Insert(noteData));
-      const updatedNotes = [...Notes, noteData];
-      saveToLocal("Notes", updatedNotes);
+      // dispatch(Insert(noteData));
+      // const updatedNotes = [...Notes, noteData];
+      // saveToLocal("Notes", updatedNotes);
 
       setT("");
       setFormattedNote("");
@@ -343,10 +352,16 @@ function Note() {
                     {...register("Save")}
                     type="Submit"
                     onClick={() => {
-                      const editedData = {
-                        Title: T,
-                        Note: formattedNote,
-                      };
+                      const editedData = {};
+
+                      if (T) {
+                        editedData.Title = T;
+                      }
+                      if (formattedNote) {
+                        editedData.Note = formattedNote;
+                      }
+
+                      console.log("Edited data:", editedData);
 
                       onSave(editedData, noteId);
                     }}

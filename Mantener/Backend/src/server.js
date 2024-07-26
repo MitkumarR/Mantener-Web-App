@@ -110,8 +110,9 @@ app.post("/notes", async (req, res) => {
 });
 
 app.post("/note", async (req, res) => {
-
   const { username, itemid, edits } = req.body;
+
+  console.log("Received data:", { username, itemid, edits });
 
   try {
     const user = await User.findOne({ username });
@@ -120,11 +121,12 @@ app.post("/note", async (req, res) => {
         note.Id === itemid
           ? {
               ...note,
-              Title: edits.Title,
-              Note: edits.Note,
+              Title: edits.Title !== undefined ? edits.Title : note.Title,
+              Note: edits.Note !== undefined ? edits.Note : note.Note,
             }
           : note
       );
+
       await user.save();
       res.status(201).json({ message: "Note saved successfully" });
     } else {
