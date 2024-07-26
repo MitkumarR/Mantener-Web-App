@@ -412,6 +412,10 @@ function Notes() {
                         onClick={() => {
                           dispatch(Open(item.Id));
                           setOpened(true);
+
+                          const newNoteId = item.Id;
+
+                          saveToLocal("itemId", newNoteId);
                         }}
                         className={`absolute top-0  w-full h-full ${
                           item.Opened && "bg-white opacity-10"

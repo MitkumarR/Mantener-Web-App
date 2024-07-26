@@ -115,30 +115,24 @@ function Note() {
     //   }
     // }
 
-    const handleBeforeUnload = (event) => {
-      const confirmationMessage =
-        "Are you sure you want to leave? All your data will be erased.";
-      event.returnValue = confirmationMessage;
-      return confirmationMessage;
-    };
+    // const handleBeforeUnload = (event) => {
+    //   const confirmationMessage =
+    //     "Are you sure you want to leave? All your data will be erased.";
+    //   event.returnValue = confirmationMessage;
+    //   return confirmationMessage;
+    // };
 
-    const handleUnload = () => {
-      // localStorage.clear();
-    };
+    // window.addEventListener("beforeunload", handleBeforeUnload);
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("unload", handleUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("unload", handleUnload);
-    };
+    // return () => {
+    //   window.removeEventListener("beforeunload", handleBeforeUnload);
+    // };
   }, [dispatch, issigned, navigate, istempUser, note]);
 
   useEffect(() => {
     adjustTextareaHeight();
   }, [N]);
-  
+
   const {
     register,
     handleSubmit,
@@ -148,10 +142,9 @@ function Note() {
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
-    textarea.style.height = 'auto'; // Reset height
+    textarea.style.height = "auto"; // Reset height
     textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scroll height
   };
-
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -172,45 +165,48 @@ function Note() {
     }
   };
 
-  const onSave = async (note) => {
-    const Id = uuidv4();
-    const Title = T;
-    const Note = formattedNote;
-    const Archived = false;
-    const Deleted = false;
-    const Pinned = false;
-    const Hovered = false;
-    const Opened = false;
-    const Writable = false;
-    const Bgcolor = 0;
-
+  const onChange = async (changedData, itemId) => {
     let user_name = localStorage.getItem("userName");
     user_name = user_name.replace(/^"|"$/g, "");
 
-    const noteData = {
-      Id,
-      Title,
-      Note,
-      Deleted,
-      Pinned,
-      Archived,
-      Opened,
-      Writable,
-      Bgcolor,
-      Hovered,
-    };
+    if (issigned) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/notes/change",
+          {
+            username: user_name,
+            itemid: itemId,
+            changes: changedData,
+          }
+        );
+
+        if (response.status === 201) {
+          console.log(response.data.message);
+        } else {
+          console.error("Error saving note", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error saving note to backend", error);
+      }
+    }
+  };
+
+  const onSave = async (editedData, itemId) => {
+    let user_name = localStorage.getItem("userName");
+    user_name = user_name.replace(/^"|"$/g, "");
 
     if (issigned) {
       try {
-        const response = await axios.post("http://localhost:3000/notes", {
+        const response = await axios.post("http://localhost:3000/note", {
           username: user_name,
-          note: noteData,
+          itemid: itemId,
+          edits: editedData,
         });
 
         if (response.status === 201) {
-          setT("");
-          setFormattedNote("");
-          setN("");
+          // setT("");
+          // setFormattedNote("");
+          // setN("");
           console.log(response.data.message);
         } else {
           console.error("Error saving note", response.data.message);
@@ -234,7 +230,7 @@ function Note() {
       <div className="fixed z-20 h-screen w-[100%] blur-0 bg-black flex bg-opacity-70 justify-center items-center"></div>
       <div className="z-30 h-[50rem] pt-20 w-[100%] flex justify-center items-center">
         <div className="border-[1px] w-[30%] min-h-[3rem] h-fit p-2 rounded border-white bg-black">
-          <form action="" method="post" onSubmit={handleSubmit(onSave)}>
+          <form action="" method="post">
             <div className="relative flex justify-start items-center pb-1">
               <input
                 {...register("Title")}
@@ -342,13 +338,23 @@ function Note() {
                 </button>
               </li>
               <li className=" absolute right-0 flex justify-center items-center w-fit">
-                <button
-                  {...register("Save")}
-                  type="Submit"
-                  className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[3rem] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
-                >
-                  Save
-                </button>
+                <Link to="/notes">
+                  <button
+                    {...register("Save")}
+                    type="Submit"
+                    onClick={() => {
+                      const editedData = {
+                        Title: T,
+                        Note: formattedNote,
+                      };
+
+                      onSave(editedData, noteId);
+                    }}
+                    className="text-xs rounded-sm border-[1px] duration-150 border-blue-500 bg-blue-500 right-0 w-[3rem] flex justify-center items-center text-black hover:bg-black hover:text-blue-500"
+                  >
+                    Save
+                  </button>
+                </Link>
               </li>
             </ul>
           </form>
