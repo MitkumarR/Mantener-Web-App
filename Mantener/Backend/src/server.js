@@ -14,7 +14,7 @@ const { Writable } = require("stream");
 // const { change } = require("../../src/redux/clicked/clickedSlice");
 dotenv.config();
 
-const url = "mongodb://localhost:27017/";
+const url = "mongodb+srv://mitkumar2105:mitMongo@mantener.ho0xtc0.mongodb.net/";
 const client = new MongoClient(url);
 
 const dbName = "Mantener";
@@ -30,7 +30,7 @@ app.set("view engine", "jsx");
 
 // client.connect();
 
-mongoose.connect("mongodb://localhost:27017/Mantener", {
+mongoose.connect("mongodb+srv://mitkumar2105:mitMongo@mantener.ho0xtc0.mongodb.net/Mantener", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
